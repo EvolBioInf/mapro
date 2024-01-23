@@ -68,6 +68,17 @@ To generate the documentation, run
 
 The documentation is now in `doc/mapro.pdf`.
 
+## Run Docker container
+Alternatively, there is also a docker container available.
+
+To get the docker run: \
+`$ docker pull beatrizvm/mapro`
+
+It can then be run with:
+
+`$ docker run -it beatrizvm/mapro`
+
+
 ## Dependencies
 ### Apt Packages
 
@@ -75,10 +86,13 @@ Running `mapro` requires installation of a number of apt packages:
 
 `$ sudo apt install bc phylonium ncbi-blast+ primer3 noweb`
 
+It also requires the NCBI CLI [datasets and dataformat](https://www.ncbi.nlm.nih.gov/datasets/docs/v2/download-and-install/)
+
 For the documentation these extra packages are required:  
 
 `$ sudo apt install texlive-science texlive-pstricks
 texlive-latex-extra texlive-fonts-extra`
+
 
 ### Other packages
 
@@ -86,6 +100,6 @@ We also need the packages
 [Neighbors](https://github.com/evolbioinf/neighbors),
 [Fur](https://github.com/evolbiofinf/fur),
 [Prim](https://github.com/evolbioinf/prim), and
-(Biobox)[https://github.com/evolbioinf/biobox).
+[Biobox](https://github.com/evolbioinf/biobox).
 
 
