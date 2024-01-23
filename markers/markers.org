@@ -1,0 +1,79 @@
+#+begin_export latex
+\section*{Introduction}
+The script \ty{markers.sh} applies Fur to the contents of a download
+directory, \ty{d}, generated with \ty{genomes.sh}. The result is a set
+of markers in \ty{d/markers.fasta}.
+
+\section*{Implementation}
+The script \ty{markers.sh} interacts with the user, then generates the
+markers. \bpr{markers.sh}{pr:mar}
+#+end_export
+#+begin_src sh <<markers.sh>>=
+  #!/usr/bin/bash
+  ##<<Interact with user, Pr. \ref{pr:mar}>>
+  ##<<Generate markers, Pr. \ref{pr:mar}>>
+#+end_src
+#+begin_export latex
+\epr
+In the user interaction we set the usage, parse the options, and check
+them.
+#+end_export
+#+begin_src sh <<Interact with user, Pr. \ref{pr:mar}>>=
+  //<<Set usage, Pr. \ref{pr:mar}>>
+  //<<Parse options, Pr. \ref{pr:mar}>>
+  //<<Check options, Pr. \ref{pr:mar}>>
+#+end_src
+#+begin_export latex
+We declare two options, the download directory (\ty{-d}) and help
+(\ty{-h}). Setting the download directory is mandatory.
+#+end_export
+#+begin_src sh <<Set usage, Pr. \ref{pr:mar}>>=
+  usage="$(basename $0) [-h] -d <downloadDir>
+  Use Fur to extract markers from targets and neighbors.
+  Example: bash markers.sh ecl"
+#+end_src
+#+begin_export latex
+We parse the options. If the user asked for help, we print the usage
+and exit. If the user entered an unknown option or omitted the
+argument of \ty{-d}, the system prints an error message and we exit.
+#+end_export
+#+begin_src sh <<Parse options, Pr. \ref{pr:mar}>>=
+  while getopts "hd:" arg; do
+      case $arg in
+	  h) echo "$usage"
+	     exit;;
+	  d) dir=$OPTARG;;
+	  \?) exit 1;;
+      esac
+  done
+#+end_src
+#+begin_export latex
+If the user set the download directory with \ty{-d}, we make sure it
+exists; otherwise, we ask for it.
+#+end_export
+#+begin_src sh <<Check options, Pr. \ref{pr:mar}>>=
+  if [[ ! $dir ]]; then
+      echo "Please provide a download directory."
+      echo "$usage"
+      exit 1
+  else
+      if [[ ! -d $dir ]]; then
+	  echo "Download directory $dir doesn't exist."
+      fi
+  fi
+#+end_src
+#+begin_export latex
+To generate the markers, we change into the download directory and run
+\ty{makeFurDb} followed by \ty{fur}. We filter the output of \ty{fur}
+through \ty{cleanSeq} and save the result to \ty{markers.fasta}.
+#+end_export
+#+begin_src sh <<Generate markers, Pr. \ref{pr:mar}>>=
+  cd $dir
+  makeFurDb -t targets -n neighbors -d all.db
+  fur -d all.db |
+      cleanSeq > markers.fasta
+#+end_src
+#+begin_export latex
+We've extracted the markers, which completes \ty{markers.sh}.
+#+end_export
+

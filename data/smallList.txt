@@ -1,0 +1,2 @@
+aae     AE000657.1      Aquifex aeolicus VF5
+ecl	CP001918.1	Enterobacter cloacae subsp. cloacae ATCC 13047

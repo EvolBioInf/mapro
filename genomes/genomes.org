@@ -1,0 +1,299 @@
+#+begin_export latex
+\section*{Introduction}
+The script \ty{genomes.sh} fetches target and neighbor genomes for
+marker discovery with Fur. The script starts from a type strain and
+takes the taxonomic parent of that strain as the target taxon. The
+result of a run of \ty{genomes.sh} is one directory containing the
+directories \ty{targets} and \ty{neighbors} ready for analysis with
+Fur.
+
+\section*{Implementation}
+The script \ty{genome.sh} interacts with the user, then gets the
+genomes.  \bpr{genomes.sh}{pr:gen}
+#+end_export
+#+begin_src sh <<genomes.sh>>=
+  #!/usr/bin/bash
+  ##<<Interact with user, Pr. \ref{pr:gen}>>
+  ##<<Get genomes, Pr. \ref{pr:gen}>>
+#+end_src
+#+begin_export latex
+\epr By way of user interaction we set the usage, parse the options,
+and check them.
+#+end_export
+#+begin_src sh <<Interact with user, Pr. \ref{pr:gen}>>=
+  //<<Set usage, Pr. \ref{pr:gen}>>
+  //<<Parse options, Pr. \ref{pr:gen}>>
+  //<<Check options, Pr. \ref{pr:gen}>>
+#+end_src
+#+begin_export latex
+The script \ty{genomes.sh} takes four options,
+\begin{enumerate}
+\item \ty{-t} the type strain
+\item \ty{-d} the directory in which the target and neighbor genomes
+  for the type stain are deposited
+\item \ty{-n} the Neighbors database
+\item \ty{-h} help
+\end{enumerate}
+The first three options are mandatory.
+#+end_export
+#+begin_src sh <<Set usage, Pr. \ref{pr:gen}>>=
+  ts="Enterobacter cloacae subsp. cloacae ATCC 13047"
+  usage="$(basename $0) [-h] -t <typeStrain> -d <downloadDir>"
+  usage="$usage -n <neighborsDb>
+  Download target and neighbor genomes for a type strain.
+  Example: bash genomes.sh -t \"$ts\""
+  usage="$usage -d ecl -n neidb"
+#+end_src
+#+begin_export latex
+We parse the options. If the user asked for help, we print the usage
+and exit. If the user entered an illegal option or omitted an
+argument, the system prints a message and we exit with error code 1.
+#+end_export
+#+begin_src sh <<Parse options, Pr. \ref{pr:gen}>>=
+  while getopts "ht:d:n:" arg; do
+      case $arg in
+	  h) echo "$usage"
+	     exit;;
+	  t) strain=$OPTARG;;
+	  d) dir=$OPTARG;;
+	  n) db=$OPTARG;;
+	  \?) exit 1;;
+      esac
+  done
+#+end_src
+#+begin_export latex
+We check the three mandatory options, \ty{-t}, \ty{-d}, and \ty{-n}.
+#+end_export
+#+begin_src sh <<Check options, Pr. \ref{pr:gen}>>=
+  //<<Check \ty{-t}, Pr. \ref{pr:gen}>>
+  //<<Check \ty{-d}, Pr. \ref{pr:gen}>>
+  //<<Check \ty{-n}, Pr. \ref{pr:gen}>>
+#+end_src
+#+begin_export latex
+If the user didn't set a type strain with \ty{-t}, we politely ask for
+one and exit.
+#+end_export
+#+begin_src sh <<Check \ty{-t}, Pr. \ref{pr:gen}>>=
+  if [[ ! $strain ]]; then
+      echo "Please provide a type strain."
+      echo "$usage"
+      exit 1
+  fi
+#+end_src
+#+begin_export latex
+Similarly, if the user didn't provide a download directory with
+\ty{-d}, we ask for it and exit. If, however, (s)he did provide one
+and it already exists, we'd rather not overwrite that and also bail
+with message.
+#+end_export
+#+begin_src sh <<Check \ty{-d}, Pr. \ref{pr:gen}>>=
+  if [[ ! $dir ]]; then
+      echo "Please provide a download directory."
+      echo "$usage"
+      exit 1
+  else
+      if [[ -d $dir ]]; then
+	  echo "Download directory already exists."
+	  exit 1
+      fi
+  fi
+#+end_src
+#+begin_export latex
+If the user didn't provided a Neighbors database, we ask for one,
+otherwise we check its existence.
+#+end_export
+#+begin_src sh <<Check \ty{-n}, Pr. \ref{pr:gen}>>=
+  if [[ ! $db ]]; then
+      echo "Please provide a Neighbors database."
+      echo "$usage"
+      exit 1
+  else
+      if [[ ! -f $db ]]; then
+	  echo "Database $db doesn't exist."
+	  exit 1
+      fi
+  fi
+#+end_src
+#+begin_export latex
+To get the genomes, we make the download directory, change into it,
+and prefix the database path by \ty{../}. Then we get the genome
+accessions and divide them into taxonomic targets and neighbors. We
+download the corresponding genomes and split them into the
+phylogenetic targets and neighbors.
+#+end_export
+#+begin_src sh <<Get genomes, Pr. \ref{pr:gen}>>=
+  mkdir $dir
+  cd $dir
+  db="../$db"
+  //<<Get genome accessions, Pr. \ref{pr:gen}>>
+  //<<Divide accessions into taxonomic targets and neighbors, Pr. \ref{pr:gen}>>
+  //<<Download genomes, Pr. \ref{pr:gen}>>
+  //<<Divide genomes into phylogenetic targets and neighbors, Pr. \ref{pr:gen}>>
+#+end_src
+#+begin_export latex
+To obtain the accessions of the taxonomic target and neighbor genomes,
+we start by looking up the taxon ID of the type strain's parent in the
+Neighbors database. This gives us the ID of the targets we pass to
+\ty{neighbors}, which lists all target and neighbor accessions. We
+save these accessions in the file \ty{acc.txt}.
+#+end_export
+#+begin_src sh <<Get genome accessions, Pr. \ref{pr:gen}>>=
+  tid=$(taxi "$strain" $db |
+	    tail -n +2 |
+	    awk '{print $2}')
+  echo $tid |
+      neighbors -l $db > acc.txt
+#+end_src
+#+begin_export latex
+The file \ty{all.txt} contains two columns, type and genome
+accession. The type is either \ty{t} for \emph{target}, or \ty{n} for
+\emph{neighbor}. So we can use \ty{grep} to divide the accessions into
+those of the targets, which we save in \ty{tacc.txt}, and those of the
+neighbors, which we save in \ty{nacc.txt}.
+#+end_export
+#+begin_src sh <<Divide accessions into taxonomic targets and neighbors, Pr. \ref{pr:gen}>>=
+  for a in t n; do
+      grep ^${a} acc.txt |
+	  awk '{print $2}' > ${a}acc.txt
+  done
+#+end_src
+#+begin_export latex
+We download the genomes in compressed form and then unpack them.
+#+end_export
+#+begin_src sh <<Download genomes, Pr. \ref{pr:gen}>>=
+  //<<Download compressed genomes, Pr. \ref{pr:gen}>>
+  //<<Unpack genomes, Pr. \ref{pr:gen}>>
+#+end_src
+#+begin_export latex
+We use the tool
+\ty{datasets}\footnote{\ty{www.ncbi.nlm.nih.gov/datasets/}} for
+downloading the genomes listed in \ty{[tn]acc.txt}. However, we
+restrict ourselves to genomes with complete assemblies and exclude
+those flagged as ``atypical''. The download is a zipped file in
+``dehydrated'' format, which we save to separate zip files for targets
+and neighbors, \ty{tdata.zip} and \ty{ndata.zip}, respectively.
+#+end_export
+#+begin_src sh <<Download compressed genomes, Pr. \ref{pr:gen}>>=
+  for a in t n; do
+      datasets download genome accession \
+	       --inputfile ${a}acc.txt \
+	       --assembly-level complete \
+	       --exclude-atypical \
+	       --dehydrated \
+	       --filename ${a}data.zip
+  done
+#+end_src
+#+begin_export latex
+If genomes were downloaded, we unpack them genomes by first unzipping
+them into the directories \ty{[tn]data} and then rehydrating the
+sequences in these directories. If either no targets or no neighbors
+were downloaded, there is no point in continuing. In that case we
+delete any target sequences that might have been downloaded, and exit.
+#+end_export
+#+begin_src sh <<Unpack genomes, Pr. \ref{pr:gen}>>=
+  for a in t n; do
+      if [[ -s ${a}data.zip ]]; then
+	  unzip ${a}data.zip -d ${a}data
+	  datasets rehydrate --directory ${a}data
+      else
+	  if [[ -s tdata.zip ]]; then
+	      rm -r tdata*
+	  fi
+	  exit
+      fi
+  done
+#+end_src
+#+begin_export latex
+At this point we have a set of taxonomic targets and neighbors. We now
+divide these into phylogenetic targets and neighbors. For this we
+calculate their genome phylogeny, look up the target clade in that
+phylogeny, and split the genome sequences accordingly.
+#+end_export
+#+begin_src sh <<Divide genomes into phylogenetic targets and neighbors, Pr. \ref{pr:gen}>>=
+  //<<Calculate genome phylogeny, Pr. \ref{pr:gen}>>
+  //<<Look up target clade in phylogeny, Pr. \ref{pr:gen}>>
+  //<<Split genomes by target clade, Pr. \ref{pr:gen}>>
+#+end_src
+#+begin_export latex
+The genome phylogeny needs labeled leaves, so we rename the genome
+files before calculating the desired distance phylogeny from them.
+#+end_export
+#+begin_src sh <<Calculate genome phylogeny, Pr. \ref{pr:gen}>>=
+  //<<Rename data files, Pr. \ref{pr:gen}>>
+  //<<Calculate distance phylogeny, Pr. \ref{pr:gen}>>
+#+end_src
+#+begin_export latex
+In the genome phylogeny, the labels of taxonomic targets are expected
+to have prefix \ty{t}, those of the neighbors prefix \ty{n}. So we
+create a directory, \ty{all}, and move the taxonomic target and
+neighbor genomes into it with properly prefixed names.
+#+end_export
+#+begin_src sh <<Rename data files, Pr. \ref{pr:gen}>>=
+  mkdir all
+  for p in t n; do
+      for a in ${p}data/ncbi_dataset/data/*/*.fna; do
+	  b=$(basename $a)
+	  mv $a all/${p}$b
+      done
+  done
+#+end_src
+#+begin_export latex
+We calculate the pairwise distances between all genomes using
+\ty{phylonium}. Then we convert these distances into a
+neighbor-joining tree, midpoint root the tree, label its internal
+nodes, and save it to \ty{all.nwk}.
+#+end_export
+#+begin_src sh <<Calculate distance phylogeny, Pr. \ref{pr:gen}>>=
+  phylonium all/* |
+      nj |
+      midRoot |
+      land > all.nwk
+#+end_src
+#+begin_export latex
+We look up the target clade in \ty{all.nwk} with a call to the program
+\ty{fintac}.
+#+end_export
+#+begin_src sh <<Look up target clade in phylogeny, Pr. \ref{pr:gen}>>=
+  tc=$(fintac all.nwk |
+	   tail -n +2 |
+	   awk '{print $1}')
+#+end_src
+#+begin_export latex
+We split the genomes into targets and neighbors by first getting the
+phylogenetic targets, then the phylogenetic neighbors.
+#+end_export
+#+begin_src sh <<Split genomes by target clade, Pr. \ref{pr:gen}>>=
+  //<<Get phylogenetic targets, Pr. \ref{pr:gen}>>
+  //<<Get phylogenetic neighbors, Pr. \ref{pr:gen}>>
+#+end_src
+#+begin_export latex
+We make the directory \ty{targets} for the phylogenetic targets and
+list the taxa in the target clade using the program \ty{pickle}. For
+each target taxon, we create a symbolic link from the file in \ty{all}
+into the directory \ty{targets}.
+#+end_export
+#+begin_src sh <<Get phylogenetic targets, Pr. \ref{pr:gen}>>=
+  mkdir targets
+  pickle $tc all.nwk |
+      grep -v '^#' |
+      while read a; do
+	  ln -s $(pwd)/all/$a $(pwd)/targets/$a
+      done
+#+end_src
+#+begin_export latex
+The phylogenetic neighbors are the complement of the targets. We link
+them into the directory \ty{neighbors}.
+#+end_export
+#+begin_src sh <<Get phylogenetic neighbors, Pr. \ref{pr:gen}>>=
+  mkdir neighbors
+  pickle -c $tc all.nwk |
+      grep -v '^#' |
+      while read a; do
+	  ln -s $(pwd)/all/$a $(pwd)/neighbors/$a
+      done
+#+end_src
+#+begin_export latex
+We now have two sets of genomes in directories \ty{targets} and
+\ty{neighbors} ready for marker discovery with Fur; our work on
+\ty{genomes.sh} is done.
+#+end_export

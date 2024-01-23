@@ -1,0 +1,26 @@
+\documentclass[a4paper]{report}
+\input{header}
+\begin{document}
+\pagestyle{noweb}
+
+\title{\ty{mapro}: Marker Discovery in Prokaryotes}
+\author{Beatriz Vieira Mourato \& Bernhard Haubold}
+\date{\input{date.txt}\!\!, \input{version.txt}}
+\maketitle
+
+\tableofcontents
+
+\chapter{Introduction}
+\input{intro}
+\chapter{Drive the Analysis: \ty{driver.sh}}
+\input{driver}
+\chapter{Get Genomes: \ty{genomes.sh}}
+\input{genomes}
+\chapter{Get Markers: \ty{markers.sh}}
+\input{markers}
+\chapter{Generate and test primers: \ty{primers.sh}}
+\input{primers}
+
+\bibliography{ref}
+\end{document}
+

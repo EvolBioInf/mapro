@@ -1,0 +1,120 @@
+aae	AE000657.1	Aquifex aeolicus VF5
+afa	AE007870.2	Agrobacterium fabrum str. C58
+afi	CP000020.2	Aliivibrio fischeri ES114
+ahy	CP000462.1	Aeromonas hydrophila subsp. hydrophila ATCC 7966
+ame	CP002000.1	Amycolatopsis mediterranei U32
+api	CP002177.1	Acinetobacter pittii PHEA-2
+ban1	AE016879.1	Bacillus anthracis str. Ames
+ban2	AE017225.1	Bacillus anthracis str. Sterne
+bap	BA000003.2	Buchnera aphidicola str. APS (Acyrthosiphon pisum)
+bbi	CP001840.1	Bifidobacterium bifidum PRL2010
+bbr	HE965806.1	Bordetella bronchiseptica 253
+bbu	AE000783.1	Borreliella burgdorferi B31
+bce	AE016877.1	Bacillus cereus ATCC 14579
+bdi	BA000040.2	Bradyrhizobium diazoefficiens USDA 110
+bfa	CP001643.1	Brachybacterium faecium DSM 4810
+bfr	AP006841.1	Bacteroides fragilis YCH46
+blo	AE014295.3	Bifidobacterium longum NCC2705
+bma	CP000011.2	Burkholderia mallei ATCC 23344
+bpa	HE965803.1	Bordetella parapertussis Bpp5
+bpe	BX470248.1	Bordetella pertussis Tohama I
+bps	BX571965.1	Burkholderia pseudomallei K96243
+bsu	AL009126.3	Bacillus subtilis subsp. subtilis str. 168
+bth1	AE015928.1	Bacteroides thetaiotaomicron VPI-5482
+bth2	AE017355.1	[Bacillus thuringiensis] serovar konkukian str. 97-27
+cac	AE001437.1	Clostridium acetobutylicum ATCC 824
+cau	CP000909.1	Chloroflexus aurantiacus J-10-fl
+cbo1	AM412317.1	Clostridium botulinum A str. ATCC 3502
+cbo2	CP000727.1	Clostridium botulinum A str. Hall
+cbu	AE016828.3	Coxiella burnetii RSA 493
+cdi	AM180355.1	Clostridioides difficile 630
+cgl	BA000036.3	Corynebacterium glutamicum ATCC 13032
+cje	AL111168.1	Campylobacter jejuni subsp. jejuni NCTC 11168 = ATCC 700819
+cpn	AE001363.1	Chlamydia pneumoniae CWL029
+cte	AE006470.1	Chlorobaculum tepidum TLS
+ctr1	AE001273.1	Chlamydia trachomatis D/UW-3/CX
+ctr2	AM884176.1	Chlamydia trachomatis 434/Bu
+cvi1	AE005673.1	Caulobacter vibrioides CB15
+cvi2	CP001340.1	Caulobacter vibrioides NA1000
+dra	AE000513.1	Deinococcus radiodurans R1
+dtu	CP001251.1	Dictyoglomus turgidum DSM 6724
+dvu	AE017285.1	Desulfovibrio vulgaris str. Hildenborough
+ecl	CP001918.1	Enterobacter cloacae subsp. cloacae ATCC 13047
+eco1	BA000007.3	Escherichia coli O157:H7 str. Sakai
+eco2	CP001855.1	Escherichia coli O83:H1 str. NRG 857C
+eco3	CP003289.1	Escherichia coli O104:H4 str. 2011C-3493
+eco4	CU928163.2	Escherichia coli UMN026
+eco5	CU928164.2	Escherichia coli IAI39
+eco6	U00096.3	Escherichia coli str. K-12 substr. MG1655
+efa1	AE016830.1	Enterococcus faecalis V583
+efa2	CP003583.1	Enterococcus faecium DO
+fnu	AE009951.2	Fusobacterium nucleatum subsp. nucleatum ATCC 25586
+fps	AM398681.2	Flavobacterium psychrophilum JIP02/86
+ftu	AJ749949.2	Francisella tularensis subsp. tularensis SCHU S4
+gsu	AE017180.2	Geobacter sulfurreducens PCA
+gva	CP002104.1	Gardnerella vaginalis ATCC 14019
+gvi	BA000045.2	Gloeobacter violaceus PCC 7421
+hin	L42023.1	Haemophilus influenzae Rd KW20
+hpy	AE000511.1	Helicobacter pylori 26695
+kae	CP002824.1	Klebsiella aerogenes KCTC 2190
+kpn	CP003200.1	Klebsiella pneumoniae subsp. pneumoniae HS11286
+kvu	CP002018.1	Ketogulonicigenium vulgare WSH-001
+lac	CP000033.3	Lactobacillus acidophilus NCFM
+lin	AE010301.2	Leptospira interrogans serovar Lai str. 56601
+lla	AE005176.1	Lactococcus lactis subsp. lactis Il1403
+lmo	AL591824.1	Listeria monocytogenes EGD-e
+lpa	CP000423.1	Lactobacillus paracasei ATCC 334
+lpl	AL935263.2	Lactobacillus plantarum WCFS1
+lpn	AE017354.1	Legionella pneumophila subsp. pneumophila str. Philadelphia 1
+lsa	CP000233.1	Lactobacillus salivarius UCC118
+mab	CU458896.1	Mycobacteroides abscessus ATCC 19977
+mci	CP002447.1	Mesorhizobium ciceri biovar biserrulae WSM1271
+mfl	AE017263.1	Mesoplasma florum L1
+mle	AL450380.1	Mycobacterium leprae TN
+mmy	BX293980.2	Mycoplasma mycoides subsp. mycoides SC str. PG1
+mpn	U00089.2	Mycoplasma pneumoniae M129
+msm	CP000480.1	Mycolicibacterium smegmatis MC2 155
+mth	CP000232.1	Moorella thermoacetica ATCC 39073
+mtu1	AL123456.3	Mycobacterium tuberculosis H37Rv
+mtu2	LT708304.1	Mycobacterium tuberculosis variant bovis AF2122/97
+ngo	AE004969.1	Neisseria gonorrhoeae FA 1090
+nme	AE002098.2	Neisseria meningitidis MC58
+pae	AE004091.2	Pseudomonas aeruginosa PAO1
+pma	AE017126.1	Prochlorococcus marinus subsp. marinus str. CCMP1375
+ppu	AE015451.2	Pseudomonas putida KT2440
+psy1	AE016853.1	Pseudomonas syringae pv. tomato str. DC3000
+psy2	CP000075.1	Pseudomonas syringae pv. syringae B728a
+rba	BX119912.1	Rhodopirellula baltica SH 1
+rpr	AJ235269.1	Rickettsia prowazekii str. Madrid E
+rru	CP000230.1	Rhodospirillum rubrum ATCC 11170
+rsp	CP000144.2	Rhodobacter sphaeroides 2.4.1
+sag	AE009948.1	Streptococcus agalactiae 2603V/R
+sau	CP000253.1	Staphylococcus aureus subsp. aureus NCTC 8325
+sco	AL645882.2	Streptomyces coelicolor A3(2)
+sdy	CP000034.1	Shigella dysenteriae Sd197
+sen1	AE006468.2	Salmonella enterica subsp. enterica serovar Typhimurium str. LT2
+sen2	AL513382.1	Salmonella enterica subsp. enterica serovar Typhi str. CT18
+sep	AE015929.1	Staphylococcus epidermidis ATCC 12228
+sfl	AE005674.2	Shigella flexneri 2a str. 301
+sfr	CP001389.1	Sinorhizobium fredii NGR234
+sme1	AL591688.1	Sinorhizobium meliloti 1021
+sme2	CP000738.1	Sinorhizobium medicae WSM419
+smi	FN568063.1	Streptococcus mitis B6
+smu	AE014133.2	Streptococcus mutans UA159
+son1	AE014299.2	Shewanella oneidensis MR-1
+spn2	AE007317.1	Streptococcus pneumoniae R6
+spy	AE004092.2	Streptococcus pyogenes M1 GAS
+sru	CP000159.1	Salinibacter ruber DSM 13855
+ssa	CP000387.1	Streptococcus sanguinis SK36
+ssu	FM252032.1	Streptococcus suis BM407
+tac	CP001818.1	Thermanaerovibrio acidaminovorans DSM 6589
+tde	AE017226.1	Treponema denticola ATCC 35405
+tel	BA000039.2	Thermosynechococcus elongatus BP-1
+tma	AE000512.1	Thermotoga maritima MSB8
+tth	AP008226.1	Thermus thermophilus HB8
+tye	CP001147.1	Thermodesulfovibrio yellowstonii DSM 11347
+vch	AE003852.1	Vibrio cholerae O1 biovar El Tor str. N16961
+vpa	BA000032.2	Vibrio parahaemolyticus RIMD 2210633
+xca	AE008922.1	Xanthomonas campestris pv. campestris str. ATCC 33913
+yen	AM286415.1	Yersinia enterocolitica subsp. enterocolitica 8081
+ype	AL590842.1	Yersinia pestis CO92

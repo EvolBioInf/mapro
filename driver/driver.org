@@ -1,0 +1,236 @@
+#+begin_export latex
+\section*{Introduction}
+The script \ty{driver.sh} drives the analysis of the reference
+prokaryotes. It is run as
+\begin{verbatim}
+$ bash driver.sh -d <blastDb> -n <neidb> < list.txt
+\end{verbatim}
+where \ty{list.txt} contains data in three columns, the download
+directory, the accession of the type strain, and its full name. The
+first five lines look like this:
+\begin{verbatim}
+aae	AE000657.1	Aquifex aeolicus VF5
+afa	AE007870.2	Agrobacterium fabrum str. C58
+afi	CP000020.2	Aliivibrio fischeri ES114
+ahy	CP000462.1	Aeromonas hydrophila subsp. hydrophila...
+ame	CP002000.1	Amycolatopsis mediterranei U32
+...
+\end{verbatim}
+The contents of \ty{list.txt} were extracted from the list of
+reference prokaryotes supplied by the NCBI.
+
+The script is either run in default, ``making'' mode, where it makes
+markers and primers. Alternatively, it is run in ``checking'' mode,
+where it checks primers generated in making mode. We separate these
+two modes as making markers and primers tends to be fast. In contrast,
+checking markers involves \emph{in silico} PCR using Blast runs agains
+a large database like \ty{nt} and is often slow and memory intensive.
+
+\section*{Implementation}
+The script \ty{driver.sh} first interacts with the user. Then it
+iterates over the lines in the file \ty{list.txt}. These consist of
+download directory, accession, and type strain. For each line, we
+state what we are currently analyzing, and analyse the target typified
+by the type strain. Lines that start with a hash (\verb+#+) are
+ignored. \bpr{driver.sh}{pr:dri}
+#+end_export
+#+begin_src sh <<driver.sh>>=
+  #!/usr/bin/bash
+  ##<<Interact with user, Pr. \ref{pr:dri}>>
+  while read dir acc type; do
+      if [[ $dir == "#" ]]; then
+	  continue
+      fi
+      echo "Analyzing $dir $type"
+      ##<<Analyze target, Pr. \ref{pr:dri}>>
+  done
+#+end_src
+#+begin_export latex
+\epr When interacting with the user, we set the usage of
+\ty{driver.sh}, parse its options, and check them.
+#+end_export
+#+begin_src sh <<Interact with user, Pr. \ref{pr:dri}>>=
+  ##<<Set usage, Pr. \ref{pr:dri}>>
+  ##<<Parse options, Pr. \ref{pr:dri}>>
+  ##<<Check options, Pr. \ref{pr:dri}>>
+#+end_src
+#+begin_export latex
+Apart from help, \ty{-h}, \ty{driver.sh} takes two options, the
+Neighbors database for looking up genomes, and the checking mode. The
+Neighbors database is mandatory, the checking mode optional. However,
+in checking mode the Blast database for \emph{in silico} PCR also
+becomes mandatory.
+#+end_export
+#+begin_src sh <<Set usage, Pr. \ref{pr:dri}>>=
+  usage="$(basename $0) [-h -c -b <blastDb>] -n <neighborsDb>
+  Design and check primers for a list of targets.
+  Example: bash driver.sh -b /ss01/Nt/nt -n ../data/neidb < list.txt"
+#+end_src
+#+begin_export latex
+We iterate over the options and exit if there was an error.
+#+end_export
+#+begin_src sh <<Parse options, Pr. \ref{pr:dri}>>=
+  while getopts "hcb:n:" opt; do
+      case $opt in
+	  h) echo "$usage"
+	     exit;;
+	  c) check=1;;
+	  b) bdb=$OPTARG;;
+	  n) ndb=$OPTARG;;
+	  \?) exit 1;;
+      esac
+  done
+#+end_src
+#+begin_export latex
+We check the options for Neighbors database. If we are in checking
+mode, we also check the option for for the Blast database.
+#+end_export
+#+begin_src sh <<Check options, Pr. \ref{pr:dri}>>=
+  ##<<Check Neighbors database option, \ty{-n}, Pr. \ref{pr:dri}>>
+  if [[ $check ]]; then
+      ##<<Check Blast database option, \ty{-b}, Pr. \ref{pr:dri}>>
+  fi
+#+end_src
+#+begin_export latex
+If the user set a Neighbors database, we check that it exists;
+otherwise, we politely ask for it.
+#+end_export
+#+begin_src sh <<Check Neighbors database option, \ty{-n}, Pr. \ref{pr:dri}>>=
+  if [[ $ndb ]]; then
+      if [[ ! -f "$ndb" ]]; then
+	  echo "Can't find $ndb."
+	  exit 1
+      fi
+  else
+      echo "Please provide a Neighbors database."
+      exit 1
+  fi
+#+end_src
+#+begin_export latex
+Similarly, if we are in checking mode and the user set the Blast
+database, we check that it exists; otherwise, we ask for it.
+#+end_export
+#+begin_src sh <<Check Blast database option, \ty{-b}, Pr. \ref{pr:dri}>>=
+  if [[ $bdb ]]; then
+      if [[ ! -f "$bdb.ndb" ]]; then
+	  echo "Can't find $bdb."
+	  exit 1
+      fi
+  else
+      echo "Please provide a Blast database."
+      exit 1
+  fi
+#+end_src
+#+begin_export latex
+We analyze a given target either in making mode or in checking mode.
+#+end_export
+#+begin_src sh <<Analyze target, Pr. \ref{pr:dri}>>=
+  if [[ ! $check ]]; then
+      ##<<Run in making mode, Pr. \ref{pr:dri}>>
+  else
+      ##<<Run in checking mode, Pr. \ref{pr:dri}>>
+  fi
+#+end_src
+#+begin_export latex
+In making mode we get the genomes for a given target and check that we
+got them. Then we extract the markers. At this point we are done with
+the genomes, so we delete them and check the markers. Then we design
+the primers.
+#+end_export
+#+begin_src sh <<Run in making mode, Pr. \ref{pr:dri}>>=
+  ##<<Get genomes, Pr. \ref{pr:dri}>>
+  ##<<Check genomes, Pr. \ref{pr:dri}>>
+  ##<<Extract markers, Pr. \ref{pr:dri}>>
+  ##<<Delete the genomes, Pr. \ref{pr:dri}>>
+  ##<<Check markers, Pr. \ref{pr:dri}>>
+  ##<<Design primers, Pr. \ref{pr:dri}>>
+#+end_src
+#+begin_export latex
+If the download directory already exists, we remove it. The target and
+neighbor genomes are then downloaded with the script
+\ty{genomes.sh}. It takes as arguments the type strain, the download
+directory, and the Neighbors database.
+#+end_export
+#+begin_src sh <<Get genomes, Pr. \ref{pr:dri}>>=
+  if [[ -d $dir ]]; then
+      rm -r $dir
+  fi
+  bash ../scripts/genomes.sh -t "$type" -d $dir -n $ndb
+#+end_src
+#+begin_export latex
+If at least one target and one neighbor genome was found, we continue
+with the analysis. Otherwise, we skip to the next taxon.
+#+end_export
+#+begin_src sh <<Check genomes, Pr. \ref{pr:dri}>>=
+  nt=$(ls $dir/targets/ | wc -l)
+  nn=$(ls $dir/neighbors | wc -l)
+  if [[ $nt -eq 0 || $nn -eq 0 ]]; then
+      continue
+  fi
+#+end_src
+#+begin_export latex
+We extract the markers with the script \ty{markers.sh}. It takes as
+sole argument the download directory.
+#+end_export
+#+begin_src sh <<Extract markers, Pr. \ref{pr:dri}>>=
+  bash ../scripts/markers.sh -d $dir
+#+end_src
+#+begin_export latex
+The genome sequences are not needed any more. However, we do need
+their header lines to find the threshold distance when checking the
+primers, so we reduce the genomes to their header lines. In addition,
+we delete the Fur directory the directories of downloaded sequences,
+and their zip files.
+#+end_export
+#+begin_src sh <<Delete the genomes, Pr. \ref{pr:dri}>>=
+  for a in $dir/all/*; do
+      head -n 1 $a > $dir/tmp
+      mv $dir/tmp $a
+  done
+  rm -r $dir/all.db
+  rm -r $dir/tdata* $dir/ndata*
+#+end_src
+#+begin_export latex
+If no markers were found, we skip to the next taxon.
+#+end_export
+#+begin_src sh <<Check markers, Pr. \ref{pr:dri}>>=
+  if [[ ! -s $dir/markers.fasta ]]; then
+      continue
+  fi
+#+end_src
+#+begin_export latex
+We design the primers with \ty{primers.sh}, which again only requires
+the download directory as argument.
+#+end_export
+#+begin_src sh <<Design primers, Pr. \ref{pr:dri}>>=
+  bash ../scripts/primers.sh -d $dir
+#+end_src
+#+begin_export latex
+We have now finished the making mode and turn to the checking mode. In
+checking mode we check we got any primers, then we test them.
+#+end_export
+#+begin_src sh <<Run in checking mode, Pr. \ref{pr:dri}>>=
+  ##<<Check primers, Pr. \ref{pr:dri}>>
+  ##<<Test primers, Pr. \ref{pr:dri}>>
+#+end_src
+#+begin_export latex
+If no primers were found, we skip ahead to the next taxon.
+#+end_export
+#+begin_src sh <<Check primers, Pr. \ref{pr:dri}>>=
+  if [[ ! -s $dir/primers.fasta ]]; then
+      continue
+  fi
+#+end_src
+#+begin_export latex
+To test the primers, we run \ty{primers.sh} in checking mode,
+\ty{-c}. Apart from the download directory, this requires the Blast
+database, the type strain, the type accession, and the Neighbors
+database.
+#+end_export
+#+begin_src sh <<Test primers, Pr. \ref{pr:dri}>>=
+  bash ../scripts/primers.sh -c -d $dir -b $bdb -t "$type" \
+       -a $acc -n "$ndb"
+#+end_src
+#+begin_export latex
+This completes our script \ty{driver.sh}.
+#+end_export

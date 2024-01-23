@@ -1,0 +1,77 @@
+#+begin_export latex
+The program \ty{fur} finds unique regions in genome
+sequences~\cite{hau21:fur}. It takes as input a set of target genomes
+and a set of closely related, but distinct, neighbor genomes. Then
+\ty{fur} finds the regions common to all targets that are absent form
+the neighbors. Such regions can be used to construct genetic markers.
+
+The version of \ty{fur} presented in the original publication yielded
+PCR markers of excellent specificity and
+sensitivity~\cite{hau21:fur}. However, the program was based on
+indexing all neighbors in one fell swoop, which didn't scale for large
+genomes, or for the large collections of bacterial genomes now
+routinely collected during an outbreak.
+
+In version 4 of \ty{fur} we replaced this monolithic indexing by
+iterative indexing, which reduced the memory requirement from
+proportional to the size of the complete neighborhood to the size of
+the longest neighbor sequence. In addition, iterative indexing opened
+the way to parallelization, which sped up \ty{fur} dramatically.
+
+In this document we explore the application of the new \ty{fur} to
+large collections of bacterial genomes. The choice of target genomes
+is delegated to the NCBI, which keeps a ``small curated subset of
+really good and scientifically important prokaryotic genomes'' on its
+website at
+\small
+\begin{verbatim}
+ftp.ncbi.nlm.nih.gov/genomes/GENOME_REPORTS/prok_reference_genomes.txt
+\end{verbatim}
+\normalsize We downloaded this file on November 16, 2023, although its
+time stamp is February 11, 2019. Table~\ref{tab:pro} shows an edited
+version of the 109 bacteria singled out by the NCBI, ordered by the
+number of sequenced genomes. The number of sequences ranges from
+15,316 for \emph{Eschrerichia coli} to one for six taxa, including
+\emph{Streptomyces coelicolor}, which, according to the NCBI, is
+``responsible for producing more than half the known natural
+antibiotics''.
+
+\begin{table}
+  \caption{Entries in \ty{prok\_reference\_genomes.txt} ordered by
+    number of sequenced genomes.}\label{tab:pro}
+  \begin{center}
+  \resizebox{\textwidth}{!}{
+    \begin{tabular}{|rlr|rlr|}
+      \hline
+      \# & Species & Genomes & \# & Species & Genomes\\\hline
+      \input{../intro/pro}\\
+      \hline
+    \end{tabular}
+    }
+  \end{center}
+\end{table}
+
+Figure~\ref{fig:pro} shows the number of
+sequenced genomes as a function of the taxon's table rank. Notice the
+two phases in the graph, the first containing organisms with 2000
+genomes or more, and the rest.
+
+\begin{figure}
+  \begin{center}
+    \psfrag{f1xxxxxxxxxxx}{\scriptsize$15316\times e^{-x/5}$}
+    \psfrag{f2xxxxxxxxxxx}{\scriptsize$4000\times e^{-x/14}$}
+    \includegraphics{../intro/pro}
+  \end{center}
+  \caption{The number of sequenced genomes as a function of rank in
+    Table~\ref{tab:pro} (\emph{black}); the colored lines highlight
+    the two phases of the graph.}\label{fig:pro}
+\end{figure}
+
+We have analyzed these strains to demonstrate the feasibility of
+marker discovery in the large using Fur. For each strain we download
+the target and neighbor genomes, extract the markers from them, and
+pick the best pair of PCR primers from the markers. Finally we test
+the primers to calculate their sensitivity and specificity. This gives
+a rough indication of what to expect when applying the primers
+\emph{in vitro}.
+#+end_export

@@ -1,0 +1,324 @@
+#+begin_export latex
+\section*{Introduction}
+The script \ty{primers.sh} takes as input a download directory,
+\ty{d}, generated with \ty{markers.sh}. It then either picks primers
+from the markers contained in \ty{d} and stores them in
+\ty{d/primers.fasta}, or checks primers, which are assumed to be
+located in \ty{d/primers.fasta}. The primers generated with
+\ty{primers.sh} come annotated with their pair penalty. The results of
+checking primers are their sensitivity and specificity stored in
+\ty{d/cops.out}.
+
+\section*{Implementation}
+The script \ty{primers.sh} interacts with the user, changes into the
+download directory, and then either picks primers or checks them.
+\bpr{primers.sh}{pr:pri}
+#+end_export
+#+begin_src sh <<primers.sh>>=
+  #!/usr/bin/bash
+  ##<<Interact with user, Pr. \ref{pr:pri}>>
+  ##<<Change into download directory, Pr. \ref{pr:pri}>>
+  if [[ ! $check ]]; then
+      ##<<Pick primers, Pr. \ref{pr:pri}>>
+  else
+      ##<<Check primers, Pr. \ref{pr:pri}>>
+  fi
+#+end_src
+#+begin_export latex
+\epr To interact with the user we set the usage of \ty{primers.sh},
+parse its options, and check them.
+#+end_export
+#+begin_src sh <<Interact with user, Pr. \ref{pr:pri}>>=
+  //<<Set usage, Pr. \ref{pr:pri}>>
+  //<<Parse options, Pr. \ref{pr:pri}>>
+  //<<Check options, Pr. \ref{pr:pri}>>
+#+end_src
+#+begin_export latex
+Apart from help (\ty{-h}), \ty{primers.sh} takes as options the
+download directory (\ty{-d}) and whether or not to check primers. In
+checking mode, we need a Blast database with taxonomy information for
+\emph{in silico} PCR, the name of the type strain, its accession, and
+the name of the Neighbors database. The download directory is always
+mandatory. In checking mode, the Blast database, the type strain, the
+Neighbors database, and the reference list also become mandatory.
+#+end_export
+#+begin_src sh <<Set usage, Pr. \ref{pr:pri}>>=
+  ts="Enterobacter cloacae subsp. cloacae ATCC 13047"
+  a="CP001918"
+  usage="$(basename $0) [-h -c -b <blastDb> -t <typeStrain>"
+  usage="$usage -a <typeAcc> -n <neighborsDb>]"
+  usage="$usage -d <downloadDir>
+  Design and check primers.
+  Example without checking: bash primers.sh -d ecl
+  Example with checking: bash primers.sh -d ecl -c"
+  usage="$usage -b /ssd01/Nt/nt -t \"$ts\" -a $a -n neidb"
+#+end_src
+#+begin_export latex
+We iterate over the options and classify each one.
+#+end_export
+#+begin_src sh <<Parse options, Pr. \ref{pr:pri}>>=
+  while getopts "hcb:t:n:d:a:" opt; do
+      case $opt in
+	  ##<<Classify option, Pr. \ref{pr:pri}>>
+      esac
+  done
+#+end_src
+#+begin_export latex
+We classify the current option and exit if an error occurred.
+#+end_export
+#+begin_src sh <<Classify option, Pr. \ref{pr:pri}>>=
+  h) echo "$usage"
+     exit;;
+  c) check=1;;
+  b) bdb=$OPTARG;;
+  t) strain=$OPTARG;;
+  n) ndb=$OPTARG;;
+  d) dir=$OPTARG;;
+  a) typeAcc=$OPTARG;;
+  \?) exit 1;;
+#+end_src
+#+begin_export latex
+We check the download directory, \ty{-d}. If primer checking is
+requested, \ty{-c}, we make sure there really are primers. Then we
+also check the Blast database, \ty{-b}, the type strain, \ty{-t}, and the
+Neighbors database, \ty{-n}.
+#+end_export
+#+begin_src sh <<Check options, Pr. \ref{pr:pri}>>=
+  ##<<Check \ty{-d}, Pr. \ref{pr:pri}>>
+  if [[ $check ]]; then
+      ##<<Ensure primers, Pr. \ref{pr:pri}>>
+      ##<<Check \ty{-b}, Pr. \ref{pr:pri}>>
+      ##<<Check \ty{-t}, Pr. \ref{pr:pri}>>
+      ##<<Check \ty{-n}, Pr. \ref{pr:pri}>>
+  fi
+#+end_src
+#+begin_export latex
+If there are no primers, we quit with a message.
+#+end_export
+#+begin_src sh <<Ensure primers, Pr. \ref{pr:pri}>>=
+  if [[ ! -s "$dir/primers.fasta" ]]; then
+      echo "Can't find primers in $dir/primers/fasta"
+      exit 1
+  fi
+#+end_src
+#+begin_export latex
+If the user set a download directory with \ty{-d}, we check that it
+exists. Otherwise we ask for it.
+#+end_export
+#+begin_src sh <<Check \ty{-d}, Pr. \ref{pr:pri}>>=
+  if [[ $dir ]]; then
+      if [[ ! -d $dir ]]; then
+	  echo "Download directory $dir doesn't exist."
+	  exit 1
+      fi
+  else
+      echo "Please enter a dowload directory."
+      echo "$usage"
+      exit 1
+  fi
+#+end_src
+#+begin_export latex
+If the user set a Blast database with \ty{-b}, we check it exists;
+otherwise we ask for it.
+#+end_export
+#+begin_src sh <<Check \ty{-b}, Pr. \ref{pr:pri}>>=
+  if [[ $bdb ]]; then
+      if [[ ! -f "$bdb.ndb" ]]; then
+	  echo "Can't find Blast db $bdb."
+	  exit 1
+      fi
+  else
+      echo "Please provide a Blast db."
+      echo "$usage"
+      exit 1
+  fi
+#+end_src
+#+begin_export latex
+If the user didn't set the type strain with \ty{-t}, we ask for it.
+#+end_export
+#+begin_src sh <<Check \ty{-t}, Pr. \ref{pr:pri}>>=
+  if [[ ! $strain ]]; then
+      echo "Please set the type strain."
+      echo "$options"
+      exit 1
+  fi
+#+end_src
+#+begin_export latex
+If the user didn't set the accession of the type strain, we ask for
+it.
+#+end_export
+#+begin_src sh <<Check \ty{-a}, Pr. \ref{pr:pri}>>=
+  if [[ ! $typeAcc ]]; then
+      m="Please the accession of the type strain"
+      exit 1
+  fi
+#+end_src
+#+begin_export latex
+If the user set a Neighbors database with \ty{-n}, we check it
+exists. Otherwise, we ask for one.
+#+end_export
+#+begin_src sh <<Check \ty{-n}, Pr. \ref{pr:pri}>>=
+  if [[ $ndb ]]; then
+      if [[ ! -f $ndb ]]; then
+	  echo "Can't find Neighbors database $ndb."
+	  exit 1
+      fi
+  else
+      echo "Please provide a Neighbors database."
+      echo "$options"
+      exit 1
+  fi
+#+end_src
+#+begin_export latex
+After we change into the download directory, we adjust the paths of
+the Neighbors database, the Blast database, and the reference list,
+unless they are given as absolute paths.
+#+end_export
+#+begin_src sh <<Change into download directory, Pr. \ref{pr:pri}>>=
+  cd $dir
+  if [[ "$ndb" != "/"* ]]; then
+      ndb="../$ndb"
+  fi
+  if [[ "$bdb" != "/"* ]]; then
+      bdb="../$bdb"
+  fi
+  if [[ "$ref" != "/"* ]]; then
+      ref="../$ref"
+  fi
+#+end_src
+#+begin_export latex
+To pick primers, we convert the markers in \ty{markers.fasta} to input
+for \ty{primer3}.  The output from \ty{primer3} is sorted by penalty
+and we store the best primer pair in \ty{primers.fasta}. In the header
+of the forward primer we also store the pair penalty.
+#+end_export
+#+begin_src sh <<Pick primers, Pr. \ref{pr:pri}>>=
+  fa2prim markers.fasta |
+      primer3_core |
+      prim2tab |
+      tail -n +2 |
+      sort -n |
+      head -n 1 |
+      while read p f r i; do
+	  printf ">f penalty: %s\n%s\n>r\n%s\n" \
+		 $p $f $r > primers.fasta
+	  break
+      done
+#+end_src
+#+begin_export latex
+Primer checking is done in two steps, first we score the primers, then
+we correct the primer scores.
+#+end_export
+#+begin_src sh <<Check primers, Pr. \ref{pr:pri}>>=
+  ##<<Score primers, Pr. \ref{pr:pri}>>
+  ##<<Check primer scores, Pr. \ref{pr:pri}>>
+#+end_src
+#+begin_export latex
+Primers are scored by running the program \ty{scop}. It takes as input
+the list of target taxa. To look up the target taxa, we need the
+target's taxon ID.
+#+end_export
+#+begin_src sh <<Score primers, Pr. \ref{pr:pri}>>=
+  ##<<Look up taxon ID of target, Pr. \ref{pr:pri}>>
+  ##<<Look up target taxa, Pr. \ref{pr:pri}>>
+  ##<<Run \ty{scop}, Pr. \ref{pr:pri}>>
+#+end_src
+#+begin_export latex
+We look up the taxon ID of the target from the Neighbors database
+using the program \ty{taxi}.
+#+end_export
+#+begin_src sh <<Look up taxon ID of target, Pr. \ref{pr:pri}>>=
+  tid=$(taxi "$strain" $ndb |
+	    tail -n +2 |
+	    awk '{print $2}')
+#+end_src
+#+begin_export latex
+We look up the target taxa from the Neighbors database using
+\ty{neighbors} and store them in the file \ty{taxa.txt}.
+#+end_export
+#+begin_src sh <<Look up target taxa, Pr. \ref{pr:pri}>>=
+  echo $tid |
+      neighbors $ndb |
+      grep '^t' |
+      awk '{print $2}' > taxa.txt
+#+end_src
+#+begin_export latex
+We score the primers in \ty{primers.fasta} by running \ty{scop} on the
+Blast database and the taxa we are targeting in that database.
+#+end_export
+#+begin_src sh <<Run \ty{scop}, Pr. \ref{pr:pri}>>=
+  scop -d $bdb -t taxa.txt primers.fasta > scop.out
+#+end_src
+#+begin_export latex
+The primer scores we just calculated with \ty{scop} are corrected with
+\ty{cops}. This takes as input the threshold distance for inclusion
+among the targets. So calculate that threshold distance before we run
+\ty{cops}.
+#+end_export
+#+begin_src sh <<Check primer scores, Pr. \ref{pr:pri}>>=
+  ##<<Calculate threshold distance, Pr. \ref{pr:pri}>>
+  ##<<Run \ty{cops}, Pr. \ref{pr:pri}>>
+#+end_src
+#+begin_export latex
+The threshold distance is calculated as twice the cumulative distance
+from the type strain's leaf in the tree to the parent of the target
+clade. So we first look up the leaf label of the type strain. Then we
+look up the target clade, and finally calculate the distance to the
+target clade's parent.
+#+end_export
+#+begin_src sh <<Calculate threshold distance, Pr. \ref{pr:pri}>>=
+  ##<<Look up leaf label of type strain, Pr. \ref{pr:pri}>>
+  ##<<Look up target clade, Pr. \ref{pr:pri}>>
+  ##<<Calculate distance from type strain to target clade's parent, Pr. \ref{pr:pri}>>
+#+end_src
+#+begin_export latex
+We search among the header lines of the targets for the name of the
+file that contains the type strain. This is the desired leaf label of
+the type strain.
+#+end_export
+#+begin_src sh <<Look up leaf label of type strain, Pr. \ref{pr:pri}>>=
+  leafLabel=$(head -n 1 targets/* |
+		  grep -B 1 $typeAcc |
+		  head -n 1 |
+		  tr -d ' =><' |
+		  sed 's/targets\///')
+#+end_src
+#+begin_export latex
+We use \ty{fintac} to look up the target clade.
+#+end_export
+#+begin_src sh <<Look up target clade, Pr. \ref{pr:pri}>>=
+  targetClade=$(fintac all.nwk |
+		    tail -n +2 |
+		    head -n 1 |
+		    awk '{print $1}')
+#+end_src
+#+begin_export latex
+We calculate the distance from the type strain to the target clade's
+parent using the program \ty{climt}.This prints four columns,
+\begin{enumerate}
+\item the steps up from the starting node
+\item the label of the current node, $v$
+\item the length of the branch from the current node to its parent, $l$
+\item the cumulative branch length on the path to the current node, $c$
+\end{enumerate}
+So we climb until $v$ is the target clade, then calculate the
+threshold, $t$ as
+\[
+t = 2(l+c).
+\]
+#+end_export
+#+begin_src sh <<Calculate distance from type strain to target clade's parent, Pr. \ref{pr:pri}>>=
+  t=$(climt $leafLabel all.nwk |
+	  awk -v v=$targetClade '$2==v{print 2*($3+$4)}')
+  threshold=$t
+#+end_src
+#+begin_export latex
+We run cops on the output of \ty{scop} and save the result in
+\ty{cops.out}.
+#+end_export
+#+begin_src sh <<Run \ty{cops}, Pr. \ref{pr:pri}>>=
+  cops -D -d $bdb -r $typeAcc -t $threshold scop.out > cops.out
+#+end_src
+#+begin_export latex
+This concludes our implementation of \ty{primers.sh}.
+#+end_export
