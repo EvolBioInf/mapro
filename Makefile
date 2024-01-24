@@ -1,6 +1,6 @@
 scripts =  driver genomes markers primers
 all: 
-	test -d analysis || mkdir analysis
+	test -d analysis || mkdir analysis; cp scripts/ex* analysis
 	for script in $(scripts); do \
 		make -C $$script; \
 		cp $$script/$$script.sh scripts; \

@@ -64,7 +64,9 @@ becomes mandatory.
 #+begin_src sh <<Set usage, Pr. \ref{pr:dri}>>=
   usage="$(basename $0) [-h -c -b <blastDb>] -n <neighborsDb>
   Design and check primers for a list of targets.
-  Example: bash driver.sh -b /ss01/Nt/nt -n ../data/neidb < list.txt"
+  Example making primers:   bash driver.sh -n neidb < list.txt
+  Example checking primers: bash driver.sh -n neidb -c"
+  usage="$usage -b <blastDb> < list.txt"
 #+end_src
 #+begin_export latex
 We iterate over the options and exit if there was an error.
