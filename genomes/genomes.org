@@ -238,12 +238,38 @@ neighbor genomes into it with properly prefixed names.
   done
 #+end_src
 #+begin_export latex
-We calculate the pairwise distances between all genomes using
-\ty{phylonium}. Then we convert these distances into a
-neighbor-joining tree, midpoint root the tree, label its internal
-nodes, and save it to \ty{all.nwk}.
+We count the number of genomes available. If there is one or none, we
+exit with message. If there are two, we calculate a UPGMA
+phylogeny. If there are at least three, we calculate a
+neighbor-joining phylogeny.
 #+end_export
 #+begin_src sh <<Calculate distance phylogeny, Pr. \ref{pr:gen}>>=
+  n=$(ls all/ | wc -l)
+  if [[ $n -le 1 ]]; then
+      echo "Need at least two genomes to calculate phylogeny."
+      exit 1
+  elif [[ $n -eq 2 ]]; then
+      ##<<Calculate UPGMA phylogeny, Pr. \ref{pr:gen}>>
+  else
+      ##<<Calculate neighbor-joining phylogeny, Pr. \ref{pr:gen}>>
+  fi
+#+end_src
+#+begin_export latex
+We calculate the pairwise distances between all genomes using
+\ty{phylonium}. Then we convert these distances into a UPGMA tree,
+label its nodes, and save it to \ty{all.nwk}.
+#+end_export
+#+begin_src sh <<Calculate UPGMA phylogeny, Pr. \ref{pr:gen}>>=
+  phylonium all/* |
+      upgma |
+      land > all.nwk
+#+end_src
+#+begin_export latex
+To calculate a neighbor-joining phylogeny, we also start from all
+pairwise distances and convert them to a neighbor-joining tree. This
+is midpoint-rooted, labeled, and also stored to \ty{all.nwk}
+#+end_export
+#+begin_src sh <<Calculate neighbor-joining phylogeny, Pr. \ref{pr:gen}>>=
   phylonium all/* |
       nj |
       midRoot |
