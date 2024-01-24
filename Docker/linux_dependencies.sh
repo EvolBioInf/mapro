@@ -5,9 +5,19 @@ apt-get update
 
 apt-get -y upgrade
 
-apt-get -y install apt-utils sudo curl wget git make cmake autoconf build-essential noweb pkg-config golang
+apt-get -y install apt-utils sudo curl wget git make cmake autoconf build-essential noweb pkg-config
 
 apt-get -y install zip unzip
+
+
+#install golang
+
+wget https://go.dev/dl/go1.21.6.linux-amd64.tar.gz
+
+tar -C /usr/local -xzf go1.21.6.linux-amd64.tar.gz
+
+#echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile
+
 
 #install biobox & phylonium dependencies
 apt-get -y install gnuplot graphviz libgsl-dev make noweb libdivsufsort-dev libdivsufsort3
@@ -18,11 +28,11 @@ apt-get clean
 # Get external dependencies
 
 ## install blastn
-apt-get install ncbi-blast+
+apt-get -y install ncbi-blast+
 
 ##install primer3
 
-apt-get install primer3
+apt-get -y install primer3
 
 
 ## install datasets

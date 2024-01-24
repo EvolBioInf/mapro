@@ -29,9 +29,13 @@ RUN ["chmod", "+x", "./linux_dependencies.sh"]
 
 RUN ./linux_dependencies.sh
 
+#Add go to path
+ENV PATH="$PATH:/usr/local/go/bin"
+
+
 COPY Docker/get_programs.sh .
 
-# #Install programs dependencies
+#Install programs dependencies
 RUN ["chmod", "+x", "./get_programs.sh"]
 
 RUN ./get_programs.sh
@@ -41,12 +45,13 @@ RUN rm -r linux_dependencies.sh
 RUN rm -r get_programs.sh
 
 
+#Compile mapro
+RUN ["make"]
+
 #Give permissions 
 RUN chown root:root /usr/bin/sudo && chmod 4755 /usr/bin/sudo
 RUN chown -R mapro /home/mapro/
 RUN chgrp -R mapro /home/mapro/
-
-RUN make
 
 USER mapro
 ENV HOME /home/mapro
