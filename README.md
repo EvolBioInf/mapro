@@ -75,7 +75,7 @@ To get the docker run: \
 
 It can then be run iteratively with:
 
-`$ docker run -it beatrizvm/mapro`
+`$ docker run -it beatrizvm/mapro:slim`
 
 To exit the docker terminal either use `ctr-D` or the command  `exit`.
 
