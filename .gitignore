@@ -47,3 +47,6 @@ scripts/driver.sh
 scripts/genomes.sh
 scripts/markers.sh
 scripts/primers.sh
+
+#Docker
+Docker/*.old

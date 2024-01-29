@@ -4,50 +4,78 @@ FROM debian:stable-slim
 LABEL authors="Beatriz Mourato"
 
 #Set working directory
-WORKDIR /home/mapro
+WORKDIR /home/mapro 
 
 #Add user
-RUN useradd -m -p NbqDBxZy0F.tE -s /bin/bash mapro
-RUN usermod -aG sudo mapro
+RUN useradd -m -p NbqDBxZy0F.tE -s /bin/bash mapro && usermod -aG sudo mapro
+
+#Create directories
+RUN mkdir /home/mapro/data && \
+    mkdir /home/mapro/Bin && \
+    mkdir /home/mapro/Extras
+
+#Get blastn, primer3 and libdivsufsort libraries
+RUN apt-get update -y && \
+    apt-get -y upgrade && \
+    apt-get install --no-install-recommends -y zip \
+    unzip \
+    ncbi-blast+\
+    primer3 \
+    libgsl-dev\
+    libdivsufsort-dev \
+    libdivsufsort3 &&\
+    apt-get clean &&\
+    apt-get autoremove -y
+
+    # Get curl and install datasets and dataformat
+
+RUN apt-get install -y curl && \
+    curl -o datasets 'https://ftp.ncbi.nlm.nih.gov/pub/datasets/command-line/v2/linux-amd64/datasets' && \
+    curl -o dataformat 'https://ftp.ncbi.nlm.nih.gov/pub/datasets/command-line/v2/linux-amd64/dataformat' && \
+    chmod +x datasets dataformat && \
+    mv datasets /home/mapro/Bin &&\
+    mv dataformat /home/mapro/Bin &&\
+    apt-get remove -y curl && \
+    apt-get autoremove -y
+    
+    #Get wget and obtain mapro datasets data
+    
+RUN apt-get install --no-install-recommends -y wget && \
+    wget https://owncloud.gwdg.de/index.php/s/G2MFEWf0Q1TUbxO/download && \
+    mv download neidb && \
+    mv neidb /home/mapro/data && \
+    wget https://owncloud.gwdg.de/index.php/s/Fs1K9kZJlY7BDmb/download && \
+    mv download ecl.tgz && \
+    tar -xvzf ecl.tgz && \
+    rm ecl.tgz && \
+    mv ecl.n* /home/mapro/data && \
+    apt-get remove -y wget && \
+    apt-get autoremove -y 
 
 
-#RUN mkdir /home/mapro/
-RUN mkdir /home/mapro/data
-RUN mkdir /home/mapro/Bin
-
-#Copy files to docker
-
-#Get all of mapro dependencies
-##Start docker from parental dir
-
+#Copy mapro folder to docker
 COPY . /home/mapro
 
-COPY Docker/linux_dependencies.sh .
-
-#Install basic linux dependencies
-RUN ["chmod", "+x", "./linux_dependencies.sh"]
-
-RUN ./linux_dependencies.sh
-
-COPY Docker/get_programs.sh .
-
-# #Install programs dependencies
-RUN ["chmod", "+x", "./get_programs.sh"]
-
-RUN ./get_programs.sh
-
-
-RUN rm -r linux_dependencies.sh
-RUN rm -r get_programs.sh
-
+#Move dependencies to Bin and Remove Docker directory
+#Get make And compile mapro
+RUN mv Docker/Manuals/*  /home/mapro/Extras/ && \
+    unzip Docker/programs/dependencies.zip -d /home/mapro/Bin &&\
+    rm -r Docker &&\
+    ln -s /home/mapro/Bin/* /usr/local/bin &&\
+    apt-get install --no-install-recommends -y make && \
+    make && \
+    apt-get remove -y make && \
+    apt-get autoremove -y 
 
 #Give permissions 
-RUN chown root:root /usr/bin/sudo && chmod 4755 /usr/bin/sudo
-RUN chown -R mapro /home/mapro/
-RUN chgrp -R mapro /home/mapro/
+RUN apt-get install --no-install-recommends -y sudo && \
+    chown root:root /usr/bin/sudo && \
+    chmod 4755 /usr/bin/sudo && \
+    chown -R mapro /home/mapro/ && \
+    chgrp -R mapro /home/mapro/ &&\
+    rm -rf /var/lib/apt/lists/*
 
-RUN make
 
 USER mapro
 ENV HOME /home/mapro
-WORKDIR /home/mapro
+#WORKDIR /home/mapro

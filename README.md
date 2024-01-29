@@ -80,12 +80,13 @@ The documentation is now in `doc/mapro.pdf`.
 Alternatively, there is also a docker container available.
 
 To get the docker run: \
-`$ docker pull beatrizvm/mapro`
+`$ docker pull beatrizvm/mapro:slim`
 
-It can then be run with:
+It can then be run iteratively with:
 
-`$ docker run -it beatrizvm/mapro`
+`$ docker run -it beatrizvm/mapro:slim`
 
+To exit the docker terminal either use `ctr-D` or the command  `exit`.
 
 ## Dependencies
 ### Apt Packages
