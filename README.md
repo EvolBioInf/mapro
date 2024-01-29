@@ -23,9 +23,18 @@ one or more prokaryotes. All scripts are located in the directory
 `scripts` and are explained in the documentation.
 
 ## Run Toy Analysis
-
-The initial `make` also constructs and prepares the directory
-`analysis`. We change into it and run the example script for
+To run the toy analysis we need a small database of *Enterobacter
+cloacae* sequences, which we download from the net.  
+`$ make ecl.db`  
+We also need a Neighbors database, which we also get ready-made from
+the net.  
+`$ make neidb`  
+This database allows us to reproduce the
+analysis of bacterial taxa described in our forthcoming publication. Alternatively, you can
+construct the Neighbors database from scratch using the current data.  
+`$ make newNeidb`  
+We change into the directory `analysis` constructed with
+the initial `make`, and run the example script for
 generating primers.
 
 `$ cd analysis`
