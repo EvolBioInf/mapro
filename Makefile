@@ -5,7 +5,7 @@ all:
 		make -C $$script; \
 		cp $$script/$$script.sh scripts; \
 	done
-.PHONY: doc data newNeidb
+.PHONY: doc data newNeiDb
 doc:
 	make -C doc
 ecl.db:

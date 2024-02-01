@@ -12,7 +12,8 @@ RUN useradd -m -p NbqDBxZy0F.tE -s /bin/bash mapro && usermod -aG sudo mapro
 #Create directories
 RUN mkdir /home/mapro/data && \
     mkdir /home/mapro/Bin && \
-    mkdir /home/mapro/Extras
+    mkdir /home/mapro/Extras &&\
+    mkdir /home/mapro/Shared
 
 #Get blastn, primer3 and libdivsufsort libraries
 RUN apt-get update -y && \
@@ -48,23 +49,23 @@ RUN apt-get install --no-install-recommends -y wget && \
     mv download ecl.tgz && \
     tar -xvzf ecl.tgz && \
     rm ecl.tgz && \
-    mv ecl.n* /home/mapro/data && \
-    apt-get remove -y wget && \
-    apt-get autoremove -y 
+    mv ecl.n* /home/mapro/data 
+    #apt-get remove -y wget && \
+    #apt-get autoremove -y 
 
 
 #Copy mapro folder to docker
-COPY . /home/mapro
+COPY . /home/mapro 
 
 #Move dependencies to Bin and Remove Docker directory
 #Get make And compile mapro
 RUN mv Docker/Manuals/*  /home/mapro/Extras/ && \
+    mv Docker/README.md /home/mapro/README_DOCKER.md &&\
     unzip Docker/programs/dependencies.zip -d /home/mapro/Bin &&\
     rm -r Docker &&\
     ln -s /home/mapro/Bin/* /usr/local/bin &&\
     apt-get install --no-install-recommends -y make && \
     make && \
-    apt-get remove -y make && \
     apt-get autoremove -y 
 
 #Give permissions 
@@ -75,7 +76,6 @@ RUN apt-get install --no-install-recommends -y sudo && \
     chgrp -R mapro /home/mapro/ &&\
     rm -rf /var/lib/apt/lists/*
 
-
 USER mapro
+
 ENV HOME /home/mapro
-#WORKDIR /home/mapro

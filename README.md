@@ -29,9 +29,10 @@ cloacae* sequences, which we download from the net.
 We also need a Neighbors database, which we also get ready-made from
 the net.  
 `$ make neidb`  
-This database allows us to reproduce the
-analysis of bacterial taxa described in our forthcoming publication. Alternatively, you can
-construct the Neighbors database from scratch using the current data.  
+This database allows us to reproduce the analysis of bacterial taxa described in
+our forthcoming publication. Alternatively, you can construct the Neighbors
+database from scratch using the current data.  
+
 `$ make newNeidb`  
 We change into the directory `analysis` constructed with
 the initial `make`, and run the example script for
@@ -80,13 +81,40 @@ The documentation is now in `doc/mapro.pdf`.
 Alternatively, there is also a docker container available.
 
 To get the docker run: \
-`$ docker pull beatrizvm/mapro:slim`
+`$ docker pull beatrizvm/mapro`
 
 It can then be run iteratively with:
 
-`$ docker run -it beatrizvm/mapro:slim`
+`$ docker run -it beatrizvm/mapro -h docker`
 
-To exit the docker terminal either use `ctr-D` or the command  `exit`.
+Where 
+-it runs the container in a CLI interactive mode,
+-h changes container's host name for easier readability (in this case to docker)
+
+If you want to create a link between the docker container and your own terminal,
+you can add a mount flag (-v). This will create and link a newly made directory
+("Shared_mapro") in your home directory and the directory "Shared" within the
+container. Files placed within this shared directory can be accessed
+within/outside the docker.
+
+For example:
+
+ `$ docker run -v ~/Shared_mapro:/home/mapro/Shared -h docker -it beatrizvm/mapro`
+
+The shared directory makes it possible to access files from outside the docker
+or results from the analysis saved to this directory. 
+
+For practical purposes, only a small subset of `nt` is actually contained within
+the docker. It would then be possible, for example, to share the directory with
+a local `nt` database, and access it from within the docker. This would remove
+the need to download the `nt` database directly within the docker.
+
+
+To exit the docker terminal, use either `ctr-D` or the command `exit`.
+
+The directory "Extras" contains the documentation for the installed packages
+(neighbors, fur, prim, biobox and
+[phylonium](https://github.com/evolbioinf/prim)).
 
 ## Dependencies
 ### Apt Packages
