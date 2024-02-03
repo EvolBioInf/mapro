@@ -38,7 +38,7 @@ ignored. \bpr{driver.sh}{pr:dri}
   #!/usr/bin/bash
   ##<<Interact with user, Pr. \ref{pr:dri}>>
   while read dir acc type; do
-      if [[ $dir == "#" ]]; then
+      if [[ $dir =~ ^"#" ]]; then
 	  continue
       fi
       echo "Analyzing $dir $type"
