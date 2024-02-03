@@ -4,8 +4,8 @@ Beatriz Vieira Mourato and Bernhard Haubold
 
 ## Description
 
-Shell scripts to discover and evaluate candidate marker regions in
-[reference
+This package contains shell scripts to discover and evaluate candidate
+marker regions in [reference
 prokaryotes](https://https://ftp.ncbi.nlm.nih.gov/genomes/GENOME_REPORTS/prok_reference_genomes.txt).
 
 ## Set Up Analysis
@@ -14,31 +14,39 @@ Run
 
 `$ make`  
 
-This constructs three main scripts and one auxiliary script. The three
-main scripts are `genomes.sh` for downloading target and neighbor
-genomes, `markers.sh` for extracting markers from the genomes, and
-`primers.sh` for designing primers from the markers and testing
-them. The auxiliary script `driver.sh` is used to run the analysis of
-one or more prokaryotes. All scripts are located in the directory
-`scripts` and are explained in the documentation.
+This constructs four scripts: `genomes.sh` for downloading target and
+neighbor genomes, `markers.sh` for extracting markers from the
+genomes, and `primers.sh` for designing primers from the markers and
+testing them. The auxiliary script `driver.sh` drives the analysis of
+one or more prokaryotes. These four scripts are located in the
+directory `scripts` and are explained in the documentation
+`doc/mapro.pdf`.
 
 ## Run Toy Analysis
 To run the toy analysis we need a small database of *Enterobacter
-cloacae* sequences, which we download from the net.  
-`$ make ecl.db`  
+cloacae* sequences, which we download from the net.
+
+`$ make ecl.db`
+
 We also need a Neighbors database, which we also get ready-made from
-the net.  
-`$ make neidb`  
-This database allows us to reproduce the
-analysis of bacterial taxa described in our forthcoming publication. Alternatively, you can
-construct the Neighbors database from scratch using the current data.  
-`$ make newNeidb`  
+the net.
+
+`$ make neidb`
+
+This database allows us to reproduce the analysis of bacterial taxa
+described in our forthcoming publication. Alternatively, you can
+construct the Neighbors database from scratch using the [current
+database
+dump](https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz) and
+[genome files](https://ftp.ncbi.nlm.nih.gov/genomes/GENOME_REPORTS).
+
+`$ make newNeidb`
+
 We change into the directory `analysis` constructed with
 the initial `make`, and run the example script for
 generating primers.
 
-`$ cd analysis`
-
+`$ cd analysis`  
 `$ bash examplePrimers.sh`
 
 Two analyses are attempted, the first for *Aquifex aeolicus* fails due
@@ -56,13 +64,14 @@ measures are in `ecl/cops.out`.
 
 ## Run Full Analysis
 
-We make markers and primers for all prokaryotes in `list.txt`.  
+We make markers and primers for all prokaryotes in `list.txt`.
 
-`$ bash ../scripts/driver.sh -n ../data/neidb < ../data/list.txt`  
+`$ bash ../scripts/driver.sh -n ../data/neidb < ../data/list.txt`
 
-To check the primers, we run  
+We can use hashes, `#`, to comment out lines in `list.txt`. To check
+the primers, we run
 
-`$ bash ../scripts/driver.sh -n ../data/neidb -b <blastDb> < ../data/list.txt`  
+`$ bash ../scripts/driver.sh -n ../data/neidb -c -b <blastDb> < ../data/list.txt`
 
 We use `nt` as our database for checking primers. This makes checking
 slow, and it might be a good idea to check only primers for organisms
@@ -77,16 +86,16 @@ To generate the documentation, run
 The documentation is now in `doc/mapro.pdf`.
 
 ## Run Docker container
-Alternatively, there is also a docker container available.
+Alternatively, there is also a docker container available. To get the
+docker run:
 
-To get the docker run: \
 `$ docker pull beatrizvm/mapro:slim`
 
 It can then be run iteratively with:
 
 `$ docker run -it beatrizvm/mapro:slim`
 
-To exit the docker terminal either use `ctr-D` or the command  `exit`.
+To exit the docker terminal, either use `ctr-D` or the command  `exit`.
 
 ## Dependencies
 ### Apt Packages
@@ -95,7 +104,7 @@ Running `mapro` requires installation of a number of apt packages:
 
 `$ sudo apt install bc phylonium ncbi-blast+ primer3 noweb`
 
-It also requires the NCBI CLI [datasets and dataformat](https://www.ncbi.nlm.nih.gov/datasets/docs/v2/download-and-install/)
+It also requires the command line tool [`datasets`](https://www.ncbi.nlm.nih.gov/datasets/docs/v2/download-and-install/)
 
 For the documentation these extra packages are required:  
 
@@ -110,5 +119,3 @@ We also need the packages
 [Fur](https://github.com/evolbiofinf/fur),
 [Prim](https://github.com/evolbioinf/prim), and
 [Biobox](https://github.com/evolbioinf/biobox).
-
-
