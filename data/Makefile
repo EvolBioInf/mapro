@@ -5,13 +5,13 @@ all: neidb ecl.db
 neidb:
 	wget https://owncloud.gwdg.de/index.php/s/G2MFEWf0Q1TUbxO/download
 	mv download neidb
-
 ecl.db:
 	wget https://owncloud.gwdg.de/index.php/s/Fs1K9kZJlY7BDmb/download
 	mv download ecl.tgz
 	tar -xvzf ecl.tgz
 	rm ecl.tgz
-newNeiDb: taxdump.tar.gz prokaryotes.txt eukaryotes.txt viruses.txt
+newNeidb: taxdump.tar.gz prokaryotes.txt eukaryotes.txt viruses.txt
+	test ! -f neidb || rm neidb
 	makeNeiDb
 taxdump.tar.gz:
 	wget $(ncbi)/pub/taxonomy/taxdump.tar.gz

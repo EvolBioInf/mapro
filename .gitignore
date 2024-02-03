@@ -2,10 +2,15 @@
 */*~
 */*/*~
 analysis
+README.pdf
 
 # Data
+data/*.dmp
+data/*.txt
+data/gc.prt
 data/ecl.*
 data/neidb
+data/taxdump.tar.gz
 
 # Main document
 doc/*.aux
@@ -50,3 +55,5 @@ scripts/primers.sh
 
 #Docker
 Docker/*.old
+
+
