@@ -12,6 +12,7 @@ ecl.db:
 	tar -xvzf ecl.tgz
 	rm ecl.tgz
 newNeidb: taxdump.tar.gz prokaryotes.txt eukaryotes.txt viruses.txt
+	test ! -f neidb || rm neidb
 	makeNeiDb
 taxdump.tar.gz:
 	wget $(ncbi)/pub/taxonomy/taxdump.tar.gz
