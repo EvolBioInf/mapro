@@ -5,15 +5,15 @@ all:
 		make -C $$script; \
 		cp $$script/$$script.sh scripts; \
 	done
-.PHONY: doc data newNeiDb
+.PHONY: doc data newNeidb
 doc:
 	make -C doc
 ecl.db:
 	make -C ecl.db
 neidb:
 	make -C neidb
-newNeiDb:
-	make -C newNeiDb
+newNeidb:
+	make -C newNeidb
 
 clean:
 	make clean -C doc
