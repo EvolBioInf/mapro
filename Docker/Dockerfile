@@ -64,7 +64,7 @@ RUN mv Docker/Manuals/*  /home/mapro/Extras/ && \
     unzip Docker/programs/dependencies.zip -d /home/mapro/Bin &&\
     rm -r Docker &&\
     ln -s /home/mapro/Bin/* /usr/local/bin &&\
-    apt-get install --no-install-recommends -y make && \
+    apt-get install --no-install-recommends -y make noweb && \
     make && \
     apt-get autoremove -y 
 
