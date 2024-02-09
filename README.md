@@ -77,6 +77,16 @@ We use `nt` as our database for checking primers. This makes checking
 slow, and it might be a good idea to check only primers for organisms
 of particular interest.
 
+## Get Results of Full Analysis
+Rather than running the full analysis, the markers can be downloaded
+from inside the `mapro` directory by running
+
+`$ make results`
+
+The maker sequences for the 68 successful analyses are now contained
+in `data/results/`*tag*`.fasta`, where *tag* refers to strain names
+that can be resolved using the entries in `list.txt`.
+
 ## Make Documentation
 
 To generate the documentation, run
@@ -144,4 +154,7 @@ We also need the packages
 [Neighbors](https://github.com/evolbioinf/neighbors),
 [Fur](https://github.com/evolbiofinf/fur),
 [Prim](https://github.com/evolbioinf/prim), and
-[Biobox](https://github.com/evolbioinf/biobox).k
+[Biobox](https://github.com/evolbioinf/biobox).
+
+## License
+[GNU General Public License](https://www.gnu.org/licenses/gpl.html)
