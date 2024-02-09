@@ -9,11 +9,11 @@ all:
 doc:
 	make -C doc
 ecl.db:
-	make -C ecl.db
+	make ecl.db -C data
 neidb:
-	make -C neidb
+	make neidb -C data
 newNeidb:
-	make -C newNeidb
+	make newNeidb -C data
 
 clean:
 	make clean -C doc
