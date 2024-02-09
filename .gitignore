@@ -10,6 +10,8 @@ data/*.txt
 data/gc.prt
 data/ecl.*
 data/neidb
+data/results
+data/results.zip
 data/taxdump.tar.gz
 
 # Main document
