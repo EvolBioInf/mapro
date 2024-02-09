@@ -10,6 +10,10 @@ ecl.db:
 	mv download ecl.tgz
 	tar -xvzf ecl.tgz
 	rm ecl.tgz
+results:
+	wget https://owncloud.gwdg.de/index.php/s/rPphYKKUz0Uluvy/download
+	mv download results.zip
+	unzip results.zip
 newNeidb: taxdump.tar.gz prokaryotes.txt eukaryotes.txt viruses.txt
 	test ! -f neidb || rm neidb
 	makeNeidb
@@ -23,4 +27,4 @@ eukaryotes.txt:
 viruses.txt:
 	wget $(genomes)/viruses.txt
 clean:
-	rm -f neidb ecl.* *.dmp eukaryotes.txt gc.prt prokaryotes.txt readme.txt taxdump.tar.gz viruses.txt
+	rm -rf neidb ecl.* *.dmp eukaryotes.txt gc.prt prokaryotes.txt readme.txt results results.zip taxdump.tar.gz viruses.txt

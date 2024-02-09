@@ -14,6 +14,8 @@ neidb:
 	make neidb -C data
 newNeidb:
 	make newNeidb -C data
+results:
+	make results -C data
 
 clean:
 	make clean -C doc
