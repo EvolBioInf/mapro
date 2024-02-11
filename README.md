@@ -103,11 +103,13 @@ docker run:
 
 It can then be run iteratively with:
 
-`$ docker run -it beatrizvm/mapro -h docker`
+`$ docker run -h docker -it beatrizvm/mapro`
 
-Where  
-`-it` runs the container in a CLI interactive mode,  
-`-h` changes container's host name for easier readability (in this case to docker)
+Where
+
+`-h` changes container's host name for easier readability (in this
+case to docker),  
+`-it` runs the container in a CLI interactive mode
 
 If you want to create a link between the docker container and your own terminal,
 you can add a mount flag (-v). This will create and link a newly made directory
