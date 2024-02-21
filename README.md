@@ -154,7 +154,7 @@ texlive-latex-extra texlive-fonts-extra`
 
 We also need the packages
 [Neighbors](https://github.com/evolbioinf/neighbors),
-[Fur](https://github.com/evolbiofinf/fur),
+[Fur](https://github.com/evolbioinf/fur),
 [Prim](https://github.com/evolbioinf/prim), and
 [Biobox](https://github.com/evolbioinf/biobox).
 
