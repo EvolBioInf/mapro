@@ -1,0 +1,295 @@
+#+begin_export latex
+\section*{Introduction}
+The script \ty{anam.sh} annotates amplicons generated in a run of
+\ty{driver.sh}. It processes the same list of type strains as
+\ty{driver.sh},
+\begin{verbatim}
+$ bash anam.sh < list.txt
+\end{verbatim}
+The entries in \ty{list.txt} consist of three columns, directory,
+accession, and type strain. For each entry, the script changes into
+the corresponding directory and generates the file \ty{anam.txt} with
+annotations of the amplicon implied by the primers in
+\ty{primers.fasta}. The annotations are taken from an annotation file
+downloaded during run time.
+\section*{Implementation}
+Inside \ty{anam.sh}, we interact with the user, before we iterate over
+the entries in \ty{list.txt}. For each entry we check whether the
+corresponding primers were generated. If so, we change into the
+directory, tell the user what we are doing, annotate the amplicon, and
+return to the parent directory.
+\bpr{anam.sh}{pr:anam}
+#+end_export
+#+begin_src sh <<anam.sh>>=
+  ##<<Interact with user, Pr. \ref{pr:anam}>>
+  while read dir acc type; do
+      if [[ -s $dir/primers.fasta ]]; then
+	  cd $dir
+	  echo "Annotating $dir $type"
+	  ##<<Annotate amplicon, Pr. \ref{pr:anam}>>
+	  cd -
+      fi
+  done
+#+end_src
+#+begin_export latex
+\epr
+In our interaction with the user we set the usage of \ty{anam.sh} and
+parse its options.
+#+end_export
+#+begin_src sh <<Interact with user, Pr. \ref{pr:anam}>>=
+  ##<<Set usage, Pr. \ref{pr:anam}>>
+  ##<<Parse options, Pr. \ref{pr:anam}>>
+#+end_src
+#+begin_export latex
+We set the actual usage message, explain the purpose of \ty{anam.sh},
+and give an example command.
+#+end_export
+#+begin_src sh <<Set usage, Pr. \ref{pr:anam}>>=
+  usage="$(basename $0) [-h]
+  Annotate amplicons for a list of targets.
+  Example: bash anam.sh < list.txt"
+#+end_src
+#+begin_export latex
+We iterate over the options---there is only \ty{-h}---and exit if
+there was an error.
+#+end_export
+#+begin_src sh <<Parse options, Pr. \ref{pr:anam}>>=
+  while getopts "h" opt; do
+      case $opt in
+	  h) echo "$usage"
+	     exit;;
+	  \?) exit 1;;
+      esac
+  done
+#+end_src
+#+begin_export latex
+We annotate an amplicon by calculating its genome interval and
+intersecting this interval with the annotation file.
+#+end_export
+#+begin_src sh <<Annotate amplicon, Pr. \ref{pr:anam}>>=
+  ##<<Calculate genomic interval of amplicon, Pr. \ref{pr:anam}>>
+  ##<<Intersect interval with annotation file, Pr. \ref{pr:anam}>>
+#+end_src
+#+begin_export latex
+To calculate the amplicon's genomic interval, we extract the amplicon
+from the markers. Then we determine the accession of one target
+assembly, download that assembly, and place the amplicon on it.
+#+end_export
+#+begin_src sh <<Calculate genomic interval of amplicon, Pr. \ref{pr:anam}>>=
+  ##<<Extract amplicon from markers, Pr. \ref{pr:anam}>>
+  ##<<Determine assembly accession, Pr. \ref{pr:anam}>>
+  ##<<Download assembly, Pr. \ref{pr:anam}>>
+  ##<<Place amplicon on assembly, Pr. \ref{pr:anam}>>
+#+end_src
+#+begin_export latex
+To extract the amplicon from the markers, we determine the marker that
+contains the amplicon and cut it out.
+#+end_export
+#+begin_src sh <<Extract amplicon from markers, Pr. \ref{pr:anam}>>=
+  ##<<Determine marker, Pr. \ref{pr:anam}>>
+  ##<<Cut out amplicon, Pr. \ref{pr:anam}>>
+#+end_src
+#+begin_export latex
+The amplified marker is the sequence among all marker candidates that
+contains the forward and reverse primer. To find it, we first need to
+rename the markers. Then we match the primers and extract the amplicon
+coordinates.
+#+end_export
+#+begin_src sh <<Determine marker, Pr. \ref{pr:anam}>>=
+  ##<<Rename markers, Pr. \ref{pr:anam}>>
+  ##<<Match primers, Pr. \ref{pr:anam}>>
+  ##<<Extract amplicon coordinates, Pr. \ref{pr:anam}>>
+#+end_src
+#+begin_export latex
+We give each marker a name of the form \verb+SnumberE+, that is, a
+unique number flanked by \ty{S} and \ty{E}, and store the renamed
+markers in the file \ty{markers2.fasta}
+#+end_export
+#+begin_src sh <<Rename markers, Pr. \ref{pr:anam}>>=
+  awk '/^>/{printf ">S%dE\n", ++i}!/^>/' \
+      markers.fasta > markers2.fasta
+#+end_src
+#+begin_export latex
+We match the primers using \ty{keyMat} on the forward and reverse
+strands of the markers. To simplify things, we assume that for a given
+marker sequence a primer matches at most once. The output of
+\ty{keyMat} has then has the repeating format
+\begin{verbatim}
+# header
+[position accession]
+# header
+[position accession]
+...
+\end{verbatim}
+where the position/accession pair is optional. By grepping for
+positions and their preceding line, we extract the matches, one pair
+of lines per match. For convenient processing, we fold each pair of
+lines into a single line, yielding results like
+\begin{verbatim}
+S39E 730 f
+S39E 12 r
+\end{verbatim}
+which we save in the file \ty{lines.txt}.
+#+end_export
+#+begin_src sh <<Match primers, Pr. \ref{pr:anam}>>=
+  keyMat -r -p primers.fasta markers2.fasta |
+      grep -B 1 '^[0-9]' |
+      sed 's/ - Reverse//;s/penalty:.*//' |
+      tr '\n' ' ' |
+      tr '#' '\n' |
+      grep -v '^$' |
+      sed 's/^ //' |
+      awk '{print $1, $2, $3}' > lines.txt
+#+end_src
+#+begin_export latex
+To extract the amplicon coordinates, we the marker harboring the
+amplicon, the start of the amplicon within that marker, and the end of
+the amplicon within that marker.
+#+end_export
+#+begin_src sh <<Extract amplicon coordinates, Pr. \ref{pr:anam}>>=
+  ##<<Find marker, Pr. \ref{pr:anam}>>
+  ##<<Find amplicon start, Pr. \ref{pr:anam}>>
+  ##<<Find amplicon end, Pr. \ref{pr:anam}>>
+#+end_src
+#+begin_export latex
+We find the marker by calling \ty{findMarker.awk} on
+\ty{lines.txt}. This prints the name of the marker, the position of
+the forward primer, and the position of the reverse primer. We assume
+that \ty{findMarker.awk} is located in the same directory as
+\ty{anam.sh}.
+#+end_export
+#+begin_src sh <<Find marker, Pr. \ref{pr:anam}>>=
+  dir=$(dirname $0)
+  res=$(awk -f ../$dir/findMarker.awk lines.txt)
+  read name posF posR <<< $res
+#+end_src
+#+begin_export latex
+Inside \ty{findMarker.awk} we look for two consecutive lines for the
+same sequence with opposite strands. Once found, we print the name,
+the position on the forward strand, and the position on the reverse
+strand.\bpr{findMarker.awk}{pr:fm}
+#+end_export
+#+begin_src awk <<findMarker.awk>>=
+  {
+    n2 = $1
+    p2 = $2
+    s2 = $3
+    if(n1==n2 && s1 != s2) {
+      print n1, p1, p2
+      exit
+    }
+    n1 = n2
+    s1 = s2
+    p1 = p2
+  }
+#+end_src
+#+begin_export latex
+\epr The amplicon start on the marker is now contained in \ty{posF}.
+#+end_export
+#+begin_src sh <<Find amplicon start, Pr. \ref{pr:anam}>>=
+  markerStart=$posF
+#+end_src
+#+begin_export latex
+The amplicon end on the marker, $e$, is a function of \ty{posR}, $p$,
+and the marker length, $\ell$:
+\[
+e = \ell - p + 1.
+\]
+To find the marker length, we get its sequence from the file
+\ty{markers2.fasta} using \ty{getSeq} and measure the sequence length
+with \ty{cres}.
+#+end_export
+#+begin_src sh <<Find amplicon end, Pr. \ref{pr:anam}>>=
+  l=$(getSeq $name markers2.fasta |
+      cres |
+      grep '^To' |
+      awk '{print $2}')
+  ((markerEnd=$l-$posR+1))
+#+end_src
+#+begin_export latex
+We cut out the amplicon using \ty{cutSeq}.
+#+end_export
+#+begin_src sh <<Cut out amplicon, Pr. \ref{pr:anam}>>=
+  getSeq $name markers2.fasta |
+      cutSeq -r $markerStart-$markerEnd > amplicon.fasta
+#+end_src
+#+begin_export latex
+To determine an assembly accession, we list the target files and store
+the name of the first one, for example,
+\begin{verbatim}
+tGCA_000064305.2_ASM6430v2_genomic.fna
+\end{verbatim}
+From this string, which may start with ``t'' or ``n'', we extract the
+assembly accession \verb+GCA_*+ by deleting everything else.
+#+end_export
+#+begin_src sh <<Determine assembly accession, Pr. \ref{pr:anam}>>=
+  assembly=$(ls targets |
+		 head -n 1 |
+		 sed 's/^[tn]//;s/_[A-Z].*//')
+#+end_src
+#+begin_export latex
+We download the genome assembly with \ty{datasets}. Then we unzip the
+file to the directory \ty{assembly}. If that directory already exists,
+we remove it before the unzipping. We also give the assembly a
+convenient name, \ty{assembly.fasta}.
+#+end_export
+#+begin_src sh <<Download assembly, Pr. \ref{pr:anam}>>=
+  datasets download genome accession $assembly \
+	   --filename assembly.zip
+  if [[ -d assembly ]]; then
+      rm -r assembly
+  fi
+  unzip assembly.zip -d assembly
+  mv assembly/*/*/*/*.fna assembly.fasta
+#+end_src
+#+begin_export latex
+We place the amplicon on the assembly using \ty{sblast} and determine
+its start and end there.
+#+end_export
+#+begin_src sh <<Place amplicon on assembly, Pr. \ref{pr:anam}>>=
+  br=$(sblast amplicon.fasta assembly.fasta |
+      tail -n +2 |
+      head -n 1)
+  start=$(echo $br | awk '{print $5}')
+  end=$(echo $br | awk '{print $6}')
+#+end_src
+#+begin_export latex
+We download the annotation file and use it to look up the annotations
+of the amplicon.
+#+end_export
+#+begin_src sh <<Intersect interval with annotation file, Pr. \ref{pr:anam}>>=
+  ##<<Download annotation file, Pr. \ref{pr:anam}>>
+  ##<<Look up annotations, Pr. \ref{pr:anam}>>
+#+end_src
+#+begin_export latex
+We use the GFF file provided by the NCBI as our annotation file. As we
+just did for the genome, we download the GFF file with \ty{datasets},
+unzip it into the directory \ty{gff}, which we remove if it already
+exists, and move the GFF file to a convenient name, \ty{genomic.gff}.
+#+end_export
+#+begin_src sh <<Download annotation file, Pr. \ref{pr:anam}>>=
+  datasets download genome accession $assembly \
+	   --include gff3 --filename gff.zip
+  if [[ -d gff ]]; then
+      rm -r gff
+  fi
+  unzip gff.zip -d gff
+  mv gff/*/*/*/genomic.gff .
+#+end_src
+#+begin_export latex
+We store our output in the file \ty{anam.txt}. Its first line is a
+comment to store the interval we annotate. To get the actual
+annotations, we note that the GFF file contains start and end
+positions of annotations in columns 4 and 5. We select the annotations
+that intersect our amplicon and save them also to \ty{anam.txt}. The
+first annotation is always the full ``region'' containing all other
+annotations. Although this is redundant, we include it as a positive
+control.
+#+end_export
+#+begin_src sh <<Look up annotations, Pr. \ref{pr:anam}>>=
+  echo "#Annotation for interval ($start, $end)" > anam.txt
+  awk -v s=$start -v e=$end '$4<=e && $5>=s' \
+      genomic.gff |
+      grep -v '^#' >> anam.txt
+#+end_src
+

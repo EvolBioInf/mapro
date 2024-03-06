@@ -28,6 +28,7 @@ doc/version.txt
 intro/pro.ps
 
 # Chapters in main document
+doc/anam.tex
 doc/driver.tex
 doc/genomes.tex
 doc/intro.tex
@@ -35,6 +36,12 @@ doc/markers.tex
 doc/primers.tex
 
 # Directories of individual programs
+anam/anam.sh
+anam/findMarker.awk
+anam/afa
+anam/mle
+anam/yen
+anam/ype
 driver/aae
 driver/ecl
 driver/driver.sh
@@ -50,7 +57,9 @@ primers/primers.sh
 primers/test.sh
 
 # Scripts
+scripts/anam.sh
 scripts/driver.sh
+scripts/findMarker.awk
 scripts/genomes.sh
 scripts/markers.sh
 scripts/primers.sh
