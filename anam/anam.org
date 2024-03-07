@@ -1,10 +1,11 @@
 #+begin_export latex
 \section*{Introduction}
 The script \ty{anam.sh} annotates amplicons generated in a run of
-\ty{driver.sh}. It processes the same list of type strains as
-\ty{driver.sh},
+\ty{driver.sh}. Say, the results of \ty{driver.sh} are contained in
+\ty{mapro/analysis}. Then change into \ty{analysis} and process the
+same list of type strains as \ty{driver.sh},
 \begin{verbatim}
-$ bash anam.sh < list.txt
+$ bash ../scripts/anam.sh < ../data/list.txt
 \end{verbatim}
 The entries in \ty{list.txt} consist of three columns, directory,
 accession, and type strain. For each entry, the script changes into
