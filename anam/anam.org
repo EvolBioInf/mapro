@@ -114,7 +114,7 @@ markers in the file \ty{markers2.fasta}
 We match the primers using \ty{keyMat} on the forward and reverse
 strands of the markers. To simplify things, we assume that for a given
 marker sequence a primer matches at most once. The output of
-\ty{keyMat} has then has the repeating format
+\ty{keyMat} has the repeating format
 \begin{verbatim}
 # header
 [position accession]
@@ -143,7 +143,7 @@ which we save in the file \ty{lines.txt}.
       awk '{print $1, $2, $3}' > lines.txt
 #+end_src
 #+begin_export latex
-To extract the amplicon coordinates, we the marker harboring the
+To extract the amplicon coordinates, we the find marker harboring the
 amplicon, the start of the amplicon within that marker, and the end of
 the amplicon within that marker.
 #+end_export
@@ -191,21 +191,21 @@ strand.\bpr{findMarker.awk}{pr:fm}
   markerStart=$posF
 #+end_src
 #+begin_export latex
-The amplicon end on the marker, $e$, is a function of \ty{posR}, $p$,
-and the marker length, $\ell$:
+The amplicon end on the marker, $e$, is the start position of the
+reverse primer, $p$, plus its length, $\ell$, minus 1:
 \[
-e = \ell - p + 1.
+e = p + \ell - 1.
 \]
-To find the marker length, we get its sequence from the file
-\ty{markers2.fasta} using \ty{getSeq} and measure the sequence length
+To find the reverse primer length, we get its sequence from the file
+\ty{primers.fasta} using \ty{getSeq} and measure the sequence length
 with \ty{cres}.
 #+end_export
 #+begin_src sh <<Find amplicon end, Pr. \ref{pr:anam}>>=
-  l=$(getSeq $name markers2.fasta |
+  l=$(getSeq r primers.fasta |
       cres |
       grep '^To' |
       awk '{print $2}')
-  ((markerEnd=$l-$posR+1))
+  ((markerEnd=$posR+$l-1))
 #+end_src
 #+begin_export latex
 We cut out the amplicon using \ty{cutSeq}.
@@ -245,12 +245,13 @@ convenient name, \ty{assembly.fasta}.
 #+end_src
 #+begin_export latex
 We place the amplicon on the assembly using \ty{sblast} and determine
-its start and end there.
+its accession, start, and end there.
 #+end_export
 #+begin_src sh <<Place amplicon on assembly, Pr. \ref{pr:anam}>>=
   br=$(sblast amplicon.fasta assembly.fasta |
       tail -n +2 |
       head -n 1)
+  acc=$(echo $br | awk '{print $2}')
   start=$(echo $br | awk '{print $5}')
   end=$(echo $br | awk '{print $6}')
 #+end_src
@@ -280,16 +281,16 @@ exists, and move the GFF file to a convenient name, \ty{genomic.gff}.
 #+begin_export latex
 We store our output in the file \ty{anam.txt}. Its first line is a
 comment to store the interval we annotate. To get the actual
-annotations, we note that the GFF file contains start and end
-positions of annotations in columns 4 and 5. We select the annotations
-that intersect our amplicon and save them also to \ty{anam.txt}. The
-first annotation is always the full ``region'' containing all other
-annotations. Although this is redundant, we include it as a positive
-control.
+annotations, we note that the GFF file contains accessions, start, and
+end positions of annotations in columns 1, 4, and 5. We select the
+annotations that intersect our amplicon and save them also to
+\ty{anam.txt}. The first annotation is always the full ``region''
+containing all other annotations. Although this is redundant, we
+include it as a positive control.
 #+end_export
 #+begin_src sh <<Look up annotations, Pr. \ref{pr:anam}>>=
   echo "#Annotation for interval ($start, $end)" > anam.txt
-  awk -v s=$start -v e=$end '$4<=e && $5>=s' \
+  awk -v a=$acc -v s=$start -v e=$end '$1==a && $4<=e && $5>=s' \
       genomic.gff |
       grep -v '^#' >> anam.txt
 #+end_src
