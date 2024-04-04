@@ -277,11 +277,13 @@ file that contains the type strain. This is the desired leaf label of
 the type strain.
 #+end_export
 #+begin_src sh <<Look up leaf label of type strain, Pr. \ref{pr:pri}>>=
-  leafLabel=$(head -n 1 targets/* |
-		  grep -B 1 $typeAcc |
-		  head -n 1 |
-		  tr -d ' =><' |
-		  sed 's/targets\///')
+  for a in targets/*; do
+      r=$(grep $typeAcc $a)
+      if [[ $r != "" ]]; then
+	  leafLabel=$(basename $a)
+	  break
+      fi
+  done
 #+end_src
 #+begin_export latex
 We use \ty{fintac} to look up the target clade.
