@@ -265,16 +265,45 @@ label its nodes, and save it to \ty{all.nwk}.
       land > all.nwk
 #+end_src
 #+begin_export latex
-To calculate a neighbor-joining phylogeny, we also start from all
-pairwise distances and convert them to a neighbor-joining tree. This
-is midpoint-rooted, labeled, and also stored to \ty{all.nwk}
+To calculate a neighbor-joining phylogeny, we start from calculating
+the pairwise distances, store it in \ty{all.phyl}, and check if there
+are non-aligned sequences. The phylogeny is then converted to a
+neighbor-joining tree. This is midpoint-rooted, labeled, and also
+stored to \ty{all.nwk}.
 #+end_export
 #+begin_src sh <<Calculate neighbor-joining phylogeny, Pr. \ref{pr:gen}>>=
-  phylonium all/* |
-      nj |
-      midRoot |
-      land > all.nwk
+    phylonium all/* 2>/dev/null > all.phyl
+
+   ##//<<Check if non-aligned, Pr. \ref{pr:gen}>>
+    nj all.phyl |
+        midRoot |
+        land > all.nwk
 #+end_src
+#+begin_export latex
+A sequence failed to align if its pairwise distance is set to
+``nan''. In this case, we create a new directory for the rejected
+sequences.  We search for sequences that failed to align at least 3
+times, extract their accession and move them from all to the new
+directory.  Then neighbor-joining phylogeny is then redone and also
+stored to \ty{all.phyl}
+#+end_export
+#+begin_src sh <<Check if non-aligned, Pr. \ref{pr:gen}>>=
+if grep -q "nan" all.phyl
+    then
+	mkdir -p Rejected
+	
+	awk '{print NR "\t" gsub(/nan/,"")}' all.phyl |
+	    awk '$2>=3{print $1}' > lines.txt
+	
+	while read line
+	do
+	    file=$(awk -v line=$line 'NR==line{print $1}' all.phyl)
+	    mv all/$file Rejected
+	done < lines.txt
+
+	phylonium all/* 2> /dev/null >all.phyl
+    fi
+#+end_export
 #+begin_export latex
 We look up the target clade in \ty{all.nwk} with a call to the program
 \ty{fintac}.
