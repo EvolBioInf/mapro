@@ -186,7 +186,7 @@ and their zip files.
 #+end_export
 #+begin_src sh <<Delete the genomes, Pr. \ref{pr:dri}>>=
   for a in $dir/all/*; do
-      head -n 1 $a > $dir/tmp
+      grep '^>' $a > $dir/tmp
       mv $dir/tmp $a
   done
   rm -r $dir/all.db
