@@ -281,28 +281,26 @@ stored to \ty{all.nwk}.
 #+end_src
 #+begin_export latex
 A sequence failed to align if its pairwise distance is set to
-``nan''. In this case, we create a new directory for the rejected
-sequences.  We search for sequences that failed to align at least 3
-times, extract their accession and move them from all to the new
-directory.  Then neighbor-joining phylogeny is then redone and also
-stored to \ty{all.phyl}
+``nan''. We start by making a new directory for the rejected
+sequences. Then we go across the distance matrix and iteratively move
+the sequence with the highest occurrence of ``nan'' to the rejected
+directory. After removing the top hit, the distance matrix is once
+again calculated and stored to \ty{all.phyl}. The process repeats
+until all sequences aligned correctly.
 #+end_export
 #+begin_src sh <<Check if non-aligned, Pr. \ref{pr:gen}>>=
-if grep -q "nan" all.phyl
-    then
-	mkdir -p Rejected
+   while grep -qw "nan" all.phyl
+   do
+   mkdir -p Rejected
+	name=$(awk '{count=0; for(i=2; i<=NF;i++){if($i =="nan") count++}}{print $1, count}' all.phyl |
+		   sort -n -k2,2 -r |
+		   head -n 1  |
+		   awk '{print $1}')
 	
-	awk '{print NR "\t" gsub(/nan/,"")}' all.phyl |
-	    awk '$2>=3{print $1}' > lines.txt
-	
-	while read line
-	do
-	    file=$(awk -v line=$line 'NR==line{print $1}' all.phyl)
-	    mv all/$file Rejected
-	done < lines.txt
+	mv all/$name Rejected/
 
-	phylonium all/* 2> /dev/null >all.phyl
-    fi
+	phylonium all/* 2>/dev/null > all.phyl
+   done
 #+end_export
 #+begin_export latex
 We look up the target clade in \ty{all.nwk} with a call to the program
