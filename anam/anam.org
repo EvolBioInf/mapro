@@ -215,8 +215,8 @@ We cut out the amplicon using \ty{cutSeq}.
       cutSeq -r $markerStart-$markerEnd > amplicon.fasta
 #+end_src
 #+begin_export latex
-To determine an assembly accession, we list the target files and store
-the name of the first one, for example,
+To determine an assembly accession, we iterate over the target files
+and determine the one containing the target accession, for example,
 \begin{verbatim}
 tGCA_000064305.2_ASM6430v2_genomic.fna
 \end{verbatim}
@@ -224,9 +224,14 @@ From this string, which may start with ``t'' or ``n'', we extract the
 assembly accession \verb+GCA_*+ by deleting everything else.
 #+end_export
 #+begin_src sh <<Determine assembly accession, Pr. \ref{pr:anam}>>=
-  assembly=$(ls targets |
-		 head -n 1 |
-		 sed 's/^[tn]//;s/_[A-Z].*//')
+  for a in targets/*; do
+      r=$(grep $acc $a)
+      if [[ $r != "" ]]; then
+	  assembly=$(basename $a |
+		  sed 's/^[tn]//;s/_[A-Z].*//')
+	  break
+      fi
+  done
 #+end_src
 #+begin_export latex
 We download the genome assembly with \ty{datasets}. Then we unzip the
@@ -244,16 +249,17 @@ convenient name, \ty{assembly.fasta}.
   mv assembly/*/*/*/*.fna assembly.fasta
 #+end_src
 #+begin_export latex
-We place the amplicon on the assembly using \ty{sblast} and determine
-its accession, start, and end there.
+We place the amplicon on the assembly using \ty{blastn} in sensitive
+mode and determine its accession, start, and end there.
 #+end_export
 #+begin_src sh <<Place amplicon on assembly, Pr. \ref{pr:anam}>>=
-  br=$(sblast amplicon.fasta assembly.fasta |
-      tail -n +2 |
-      head -n 1)
+  bc="blastn -task blastn -query amplicon.fasta"
+  bc="$bc -subject assembly.fasta"
+  bc="$bc -outfmt 6"
+  br=$($bc | head -n 1)
   acc=$(echo $br | awk '{print $2}')
-  start=$(echo $br | awk '{print $5}')
-  end=$(echo $br | awk '{print $6}')
+  start=$(echo $br | awk '{print $9}')
+  end=$(echo $br | awk '{print $10}')
 #+end_src
 #+begin_export latex
 We download the annotation file and use it to look up the annotations

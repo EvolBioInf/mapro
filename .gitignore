@@ -39,9 +39,11 @@ doc/primers.tex
 anam/anam.sh
 anam/findMarker.awk
 anam/afa
+anam/gff*
 anam/mle
 anam/yen
 anam/ype
+anam/ssu
 driver/aae
 driver/ecl
 driver/driver.sh
