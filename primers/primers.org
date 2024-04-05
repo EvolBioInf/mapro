@@ -315,11 +315,19 @@ t = 2(l+c).
   threshold=$t
 #+end_src
 #+begin_export latex
-We run cops on the output of \ty{scop} and save the result in
-\ty{cops.out}.
+If the output from \ty{scop} contains false negatives or false
+positives, we run \ty{cops} and save the result in
+\ty{cops.out}. Otherwise, the result is already perfect, and we just
+copy \ty{scop.out} to \ty{cops.out}.
 #+end_export
 #+begin_src sh <<Run \ty{cops}, Pr. \ref{pr:pri}>>=
-  cops -D -d $bdb -r $typeAcc -t $threshold scop.out > cops.out
+  r=$(grep '^False' scop.out)
+  if [[ $r != "" ]]; then
+      cops -D -d $bdb -r $typeAcc -t $threshold \
+	   scop.out > cops.out
+  else
+      cp scop.out cops.out
+  fi
 #+end_src
 #+begin_export latex
 This concludes our implementation of \ty{primers.sh}.
