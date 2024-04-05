@@ -215,8 +215,10 @@ We cut out the amplicon using \ty{cutSeq}.
       cutSeq -r $markerStart-$markerEnd > amplicon.fasta
 #+end_src
 #+begin_export latex
-To determine an assembly accession, we iterate over the target files
-and determine the one containing the target accession, for example,
+We start by initializing the assembly variable and set it to an empty
+string.  To determine an assembly accession, we iterate over the
+target files and determine the one containing the target accession,
+for example,
 \begin{verbatim}
 tGCA_000064305.2_ASM6430v2_genomic.fna
 \end{verbatim}
@@ -225,6 +227,7 @@ assembly accession \verb+GCA_*+ by deleting everything else.
 #+end_export
 #+begin_src sh <<Determine assembly accession, Pr. \ref{pr:anam}>>=
   for a in targets/*; do
+      assembly=""
       r=$(grep $acc $a)
       if [[ $r != "" ]]; then
 	  assembly=$(basename $a |
@@ -234,12 +237,15 @@ assembly accession \verb+GCA_*+ by deleting everything else.
   done
 #+end_src
 #+begin_export latex
-We download the genome assembly with \ty{datasets}. Then we unzip the
-file to the directory \ty{assembly}. If that directory already exists,
-we remove it before the unzipping. We also give the assembly a
-convenient name, \ty{assembly.fasta}.
+If the assembly accession was found, we download the genome assembly
+with \ty{datasets}. Then we unzip the file to the directory
+\ty{assembly}. If that directory already exists, we remove it before
+the unzipping. We also give the assembly a convenient name,
+\ty{assembly.fasta}.
 #+end_export
 #+begin_src sh <<Download assembly, Pr. \ref{pr:anam}>>=
+  if [[ $assembly != "" ]]; then
+	   
   datasets download genome accession $assembly \
 	   --filename assembly.zip
   if [[ -d assembly ]]; then
@@ -299,5 +305,5 @@ include it as a positive control.
   awk -v a=$acc -v s=$start -v e=$end '$1==a && $4<=e && $5>=s' \
       genomic.gff |
       grep -v '^#' >> anam.txt
+fi
 #+end_src
-
