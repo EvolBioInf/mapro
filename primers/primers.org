@@ -286,9 +286,13 @@ the type strain.
   done
 #+end_src
 #+begin_export latex
-We use \ty{fintac} to look up the target clade.
+We check if the leaf label has been found and use \ty{fintac} to look
+up the target clade.  If the leaf label is empty we skip till the end
+and do not correct the primer scores.
 #+end_export
 #+begin_src sh <<Look up target clade, Pr. \ref{pr:pri}>>=
+  if [[ $leafLabel != "" ]]; then
+       
   targetClade=$(fintac all.nwk |
 		    tail -n +2 |
 		    head -n 1 |
@@ -328,6 +332,7 @@ copy \ty{scop.out} to \ty{cops.out}.
   else
       cp scop.out cops.out
   fi
+fi
 #+end_src
 #+begin_export latex
 This concludes our implementation of \ty{primers.sh}.
