@@ -322,18 +322,46 @@ phylogenetic targets, then the phylogenetic neighbors.
   //<<Get phylogenetic neighbors, Pr. \ref{pr:gen}>>
 #+end_src
 #+begin_export latex
-We make the directory \ty{targets} for the phylogenetic targets and
-list the taxa in the target clade using the program \ty{pickle}. For
-each target taxon, we create a symbolic link from the file in \ty{all}
-into the directory \ty{targets}.
+If the target clade is composed of only one target \ty{fintac} returns
+a string, otherwise it returns the clade node. We make the directory
+\ty{targets} for the phylogenetic targets and check if the target
+clade is a node or a string.
 #+end_export
 #+begin_src sh <<Get phylogenetic targets, Pr. \ref{pr:gen}>>=
   mkdir targets
-  pickle $tc all.nwk |
+
+if [[ $tc =~ ^[0-9]+$ ]]; then
+
+      ##<<Pickle target node, Pr. \ref{pr:gen}>>
+else
+
+      ##<<Pickle string accession, Pr. \ref{pr:gen}>>
+fi
+#+end_src
+#+begin_export latex
+If the target clade returns a number, we list the taxa in the target
+clade using the program \ty{pickle}.  For each target taxon, we create
+a symbolic link from the file in \ty{all} into the directory
+\ty{targets}. 
+#+end_export
+#+begin_src sh <<Pickle target node, Pr. \ref{pr:gen}>>=
+ pickle $tc all.nwk |
       grep -v '^#' |
       while read a; do
 	  ln -s $(pwd)/all/$a $(pwd)/targets/$a
       done
+#+end_src
+#+begin_src latex
+If the target clade returns a string, we extract the string,
+corresponding to the single target accession, and create a symbolic
+link from the file in \ty{all} into the directory \ty{targets}. 
+#+end_src
+#+begin_src sh <<Pickle string accession, Pr. \ref{pr:gen}>>=
+    pickle $tc all.nwk |	
+	awk 'NR==2{print $2}'|
+	while read a; do
+            ln -s $(pwd)/all/$a $(pwd)/targets/$a
+	done
 #+end_src
 #+begin_export latex
 The phylogenetic neighbors are the complement of the targets. We link
