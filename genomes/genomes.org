@@ -301,7 +301,7 @@ until all sequences aligned correctly.
 
 	phylonium all/* 2>/dev/null > all.phyl
    done
-#+end_export
+#+end_src
 #+begin_export latex
 We look up the target clade in \ty{all.nwk} with a call to the program
 \ty{fintac}.
@@ -309,6 +309,8 @@ We look up the target clade in \ty{all.nwk} with a call to the program
 #+begin_src sh <<Look up target clade in phylogeny, Pr. \ref{pr:gen}>>=
   tc=$(fintac all.nwk |
 	   tail -n +2 |
+	   sort -k 6 -n -r |
+	   head -n 1 |
 	   awk '{print $1}')
 #+end_src
 #+begin_export latex
