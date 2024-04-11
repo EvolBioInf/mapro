@@ -15,8 +15,8 @@ $(TEXT).pdf: $(TEXT).tex $(SRC1) $(SRC2)
 	latex $(TEXT).tex
 	dvips $(TEXT) -o -q
 	ps2pdf -dALLOWPSTRANSPARENCY $(TEXT).ps
-	if [ -d /mnt/g/My\ Drive/work/docs/ ]; then \
-		cp mapro.pdf /mnt/g/My\ Drive/work/docs/; \
+	if [ -d /mnt/c/Users/haubold/ownCloud\ -\ haubold@evolbio.mpg.de@owncloud.gwdg.de/docs/ ]; then \
+		cp $(TEXT).pdf /mnt/c/Users/haubold/ownCloud\ -\ haubold@evolbio.mpg.de@owncloud.gwdg.de/docs/; \
 	fi
 %.tex: ../*/%.org $(TEXT).tex
 	bash ../scripts/org2nw $< | noweave -n -x > $@

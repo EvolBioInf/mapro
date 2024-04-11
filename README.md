@@ -7,7 +7,7 @@ Beatriz Vieira Mourato and Bernhard Haubold
 This package contains shell scripts to discover and evaluate candidate
 marker regions in [reference
 prokaryotes](https://https://ftp.ncbi.nlm.nih.gov/genomes/GENOME_REPORTS/prok_reference_genomes.txt). It
-is documented [here](https://drive.google.com/file/d/118SZsP158f5Rq4mB56OIN_SYJgVfhG4O/view?usp=drive_link).
+is documented [here](https://owncloud.gwdg.de/index.php/s/sI1djbVxVqEufsY).
 
 ## Set Up Analysis
 
