@@ -1,4 +1,4 @@
-# `mapro`: Markers for Prokaryotes
+# [`mapro`: Markers for Prokaryotes](https://owncloud.gwdg.de/index.php/s/sI1djbVxVqEufsY)
 ## Authors
 Beatriz Vieira Mourato and Bernhard Haubold
 
@@ -6,8 +6,7 @@ Beatriz Vieira Mourato and Bernhard Haubold
 
 This package contains shell scripts to discover and evaluate candidate
 marker regions in [reference
-prokaryotes](https://https://ftp.ncbi.nlm.nih.gov/genomes/GENOME_REPORTS/prok_reference_genomes.txt). It
-is documented [here](https://owncloud.gwdg.de/index.php/s/sI1djbVxVqEufsY).
+prokaryotes](https://https://ftp.ncbi.nlm.nih.gov/genomes/GENOME_REPORTS/prok_reference_genomes.txt). 
 
 ## Set Up Analysis
 
