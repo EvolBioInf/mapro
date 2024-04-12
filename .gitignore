@@ -36,8 +36,6 @@ doc/markers.tex
 doc/primers.tex
 
 # Directories of individual programs
-anam/anam.sh
-anam/findMarker.awk
 anam/afa
 anam/gff*
 anam/mle
@@ -46,16 +44,12 @@ anam/ype
 anam/ssu
 driver/aae
 driver/ecl
-driver/driver.sh
 driver/test.sh
 genomes/ecl
-genomes/genomes.sh
 genomes/test.sh
 markers/ecl
-markers/markers.sh
 markers/test.sh
 primers/ecl
-primers/primers.sh
 primers/test.sh
 
 # Scripts
