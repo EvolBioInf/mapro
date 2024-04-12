@@ -237,15 +237,18 @@ assembly accession \verb+GCA_*+ by deleting everything else.
   done
 #+end_src
 #+begin_export latex
-If the assembly accession was found, we download the genome assembly
-with \ty{datasets}. Then we unzip the file to the directory
+If the assembly accession wasn't found, we skip forward to the end of
+the loop and resume the analysis with the next entry in the
+list. Otherwise, we download the genome assembly with
+\ty{datasets}. Then we unzip the file to the directory
 \ty{assembly}. If that directory already exists, we remove it before
 the unzipping. We also give the assembly a convenient name,
 \ty{assembly.fasta}.
 #+end_export
 #+begin_src sh <<Download assembly, Pr. \ref{pr:anam}>>=
   if [[ $assembly != "" ]]; then
-	   
+      continue
+  fi
   datasets download genome accession $assembly \
 	   --filename assembly.zip
   if [[ -d assembly ]]; then
@@ -305,5 +308,4 @@ include it as a positive control.
   awk -v a=$acc -v s=$start -v e=$end '$1==a && $4<=e && $5>=s' \
       genomic.gff |
       grep -v '^#' >> anam.txt
-fi
 #+end_src
