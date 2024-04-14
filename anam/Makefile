@@ -7,4 +7,4 @@ $(SH).sh: $(SH).org
 findMarker.awk: $(SH).org
 	bash ../scripts/org2nw $(SH).org | notangle -RfindMarker.awk > findMarker.awk
 clean:
-	rm -rf $(SH).sh
+	rm -rf $(SH).sh findMarker.awk
