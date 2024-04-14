@@ -1,5 +1,11 @@
 scripts =  anam driver genomes markers primers
-all: scripts/findMarker.awk
+all: 
+	test -d analysis || mkdir analysis; cp scripts/ex* analysis
+	for script in $(scripts); do \
+		cp $$script/$$script.sh scripts; \
+	done
+	cp anam/findMarker.awk scripts/
+fromOrg: scripts/findMarker.awk
 	test -d analysis || mkdir analysis; cp scripts/ex* analysis
 	for script in $(scripts); do \
 		make -C $$script; \
@@ -8,6 +14,7 @@ all: scripts/findMarker.awk
 scripts/findMarker.awk: anam/anam.org
 	make -C anam
 	cp anam/findMarker.awk scripts/
+
 .PHONY: doc data newNeidb
 doc:
 	make -C doc
