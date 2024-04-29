@@ -14,13 +14,14 @@ The distributed docker version is slimmed down to reduce the amount of memory
 required. Due to this, only a selected sample of programs and dependencies are
 installed.
 
+
 First, it contains 5 packages necessary for running `mapro`:
-([Neighbors](https://github.com/evolbioinf/neighbors),
+[Neighbors](https://github.com/evolbioinf/neighbors),
 [Fur](https://github.com/evolbiofinf/fur),
 [Biobox](https://github.com/evolbioinf/biobox) and
 [phylonium](https://github.com/evolbioinf/prim).
 
-From biobox only `nj` and `midroot` are installed.
+From biobox it contains `nj`, `midroot`, `UPGMA`, `GetSeq`, `CutSeq`, `keyMat` and `cres`.
 
 Should you wish to install any additional package, the default sudo password is
 "password".
