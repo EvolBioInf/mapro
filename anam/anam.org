@@ -246,7 +246,7 @@ the unzipping. We also give the assembly a convenient name,
 \ty{assembly.fasta}.
 #+end_export
 #+begin_src sh <<Download assembly, Pr. \ref{pr:anam}>>=
-  if [[ $assembly != "" ]]; then
+  if [[ $assembly == "" ]]; then
       continue
   fi
   datasets download genome accession $assembly \
