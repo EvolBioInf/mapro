@@ -16,7 +16,7 @@ results:
 	unzip results.zip
 newNeidb: taxdump.tar.gz prokaryotes.txt eukaryotes.txt viruses.txt
 	test ! -f neidb || rm neidb
-	makeNeidb
+	makeNeiDb
 taxdump.tar.gz:
 	wget $(ncbi)/pub/taxonomy/taxdump.tar.gz
 	tar -xvzf taxdump.tar.gz
