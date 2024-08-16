@@ -175,3 +175,7 @@ We also need the packages
 
 ## License
 [GNU General Public License](https://www.gnu.org/licenses/gpl.html)
+
+## References
+For applications see:
+ - Mourato, B. V., Tsers, I., Denker, S., Klötzl, F., & Haubold, B. (2024). [Marker discovery in the large](https://academic.oup.com/bioinformaticsadvances/article/4/1/vbae113/7721998). Bioinformatics, 1-7.
