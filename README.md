@@ -1,4 +1,4 @@
-# [`mapro`: Markers for Prokaryotes](https://owncloud.gwdg.de/index.php/s/sI1djbVxVqEufsY)
+# [`mapro`](https://owncloud.gwdg.de/index.php/s/jaad6p11lXvNKC4): Markers for Prokaryotes
 ## Authors
 Beatriz Vieira Mourato and Bernhard Haubold
 
@@ -19,8 +19,8 @@ neighbor genomes, `markers.sh` for extracting markers from the
 genomes, and `primers.sh` for designing primers from the markers and
 testing them. The auxiliary script `driver.sh` drives the analysis of
 one or more prokaryotes. These four scripts are located in the
-directory `scripts` and are explained in the documentation
-`doc/mapro.pdf`.
+directory `scripts` and are explained in the
+[documentation](https://owncloud.gwdg.de/index.php/s/jaad6p11lXvNKC4).
 
 ## Run Toy Analysis
 To run the toy analysis we need a small database of *Enterobacter
@@ -155,13 +155,13 @@ The directory "Extras" contains the documentation for the installed packages
 
 Running `mapro` requires installation of a number of apt packages:
 
-`$ sudo apt install bc phylonium ncbi-blast+ primer3 noweb`
+`$ sudo apt install bc phylonium ncbi-blast+ primer3`
 
 It also requires the command line tool [`datasets`](https://www.ncbi.nlm.nih.gov/datasets/docs/v2/download-and-install/)
 
-For the documentation these extra packages are required:  
+For typesetting the documentation, these extra packages are required:  
 
-`$ sudo apt install texlive-science texlive-pstricks
+`$ sudo apt install noweb texlive-science texlive-pstricks
 texlive-latex-extra texlive-fonts-extra`
 
 
@@ -175,7 +175,3 @@ We also need the packages
 
 ## License
 [GNU General Public License](https://www.gnu.org/licenses/gpl.html)
-
-## References
-For applications see:
- - Mourato, B. V., Tsers, I., Denker, S., Klötzl, F., & Haubold, B. (2024). [Marker discovery in the large](https://academic.oup.com/bioinformaticsadvances/article/4/1/vbae113/7721998). Bioinformatics, 1-7.
