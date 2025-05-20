@@ -168,16 +168,17 @@ We download the genomes in compressed form and then unpack them.
 We use the tool
 \ty{datasets}\footnote{\ty{www.ncbi.nlm.nih.gov/datasets/}} for
 downloading the genomes listed in \ty{[tn]acc.txt}. However, we
-restrict ourselves to genomes with complete assemblies and exclude
-those flagged as ``atypical''. The download is a zipped file in
-``dehydrated'' format, which we save to separate zip files for targets
-and neighbors, \ty{tdata.zip} and \ty{ndata.zip}, respectively.
+restrict ourselves to genomes whose assembly level has been marked as
+either complete or chromosome level and exclude those flagged as
+``atypical''. The download is a zipped file in ``dehydrated'' format,
+which we save to separate zip files for targets and neighbors,
+\ty{tdata.zip} and \ty{ndata.zip}, respectively.
 #+end_export
 #+begin_src sh <<Download compressed genomes, Pr. \ref{pr:gen}>>=
   for a in t n; do
       datasets download genome accession \
 	       --inputfile ${a}acc.txt \
-	       --assembly-level complete \
+	       --assembly-level complete,chromosome \
 	       --exclude-atypical \
 	       --dehydrated \
 	       --filename ${a}data.zip
