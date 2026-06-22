@@ -132,17 +132,33 @@ phylogenetic targets and neighbors.
 #+end_src
 #+begin_export latex
 To obtain the accessions of the taxonomic target and neighbor genomes,
-we start by looking up the taxon ID of the type strain's parent in the
-Neighbors database. This gives us the ID of the targets we pass to
-\ty{neighbors}, which lists all target and neighbor accessions. We
-save these accessions in the file \ty{acc.txt}.
+we start by looking up the taxon ID of the type strain's parent.
 #+end_export
 #+begin_src sh <<Get genome accessions, Pr. \ref{pr:gen}>>=
-  tid=$(taxi "$strain" $db |
+  pid=$(taxi "$strain" $db |
 	    tail -n +2 |
 	    awk '{print $2}')
-  echo $tid |
-      neighbors -l $db > acc.txt
+#+end_src
+#+begin_export latex
+To decide which taxon ID becomes the target, type strain or parent, we
+also need the rank of the parent ID.
+#+end_export
+#+begin_src 
+  pr=$(ants $pid $db |
+	   tail -n 1 |
+	   awk '{print $NF}')
+#+end_src
+#+begin_export latex
+Usually, the type strain's parent is the target. However, if the that
+parent has rank species, the type strain itself becomes the target.
+#+end_export
+#+begin_src sh <<Get genome accessions, Pr. \ref{pr:gen}>>=
+  target=$pid
+  if [[ "$pr" == "species" ]]; then
+      target=$(taxi "$strain" $db |
+		tail -n +2 |
+		awk '{print $1}')
+  fi
 #+end_src
 #+begin_export latex
 The file \ty{all.txt} contains two columns, type and genome
