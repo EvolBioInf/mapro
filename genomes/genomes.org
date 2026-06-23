@@ -143,13 +143,13 @@ we start by looking up the taxon ID of the type strain's parent.
 To decide which taxon ID becomes the target, type strain or parent, we
 also need the rank of the parent ID.
 #+end_export
-#+begin_src 
+#+begin_src sh <<Get genome accessions, Pr. \ref{pr:gen}>>=
   pr=$(ants $pid $db |
 	   tail -n 1 |
 	   awk '{print $NF}')
 #+end_src
 #+begin_export latex
-Usually, the type strain's parent is the target. However, if the that
+Usually, the type strain's parent is the target. However, if the
 parent has rank species, the type strain itself becomes the target.
 #+end_export
 #+begin_src sh <<Get genome accessions, Pr. \ref{pr:gen}>>=
@@ -159,6 +159,12 @@ parent has rank species, the type strain itself becomes the target.
 		tail -n +2 |
 		awk '{print $1}')
   fi
+#+end_src
+#+begin_export latex
+Now we can list the target and neighbor genomes.
+#+end_export
+#+begin_src sh <<Get genome accessions, Pr. \ref{pr:gen}>>=
+  neighbors -t $target -l $db > acc.txt
 #+end_src
 #+begin_export latex
 The file \ty{all.txt} contains two columns, type and genome
