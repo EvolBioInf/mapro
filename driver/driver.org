@@ -150,14 +150,15 @@ the primers.
 #+begin_export latex
 If the download directory already exists, we remove it. The target and
 neighbor genomes are then downloaded with the script
-\ty{genomes.sh}. It takes as arguments the type strain, the download
-directory, and the Neighbors database.
+\ty{genomes.sh}. It takes as arguments the type strain, its accession,
+the download directory, and the Neighbors database.
 #+end_export
 #+begin_src sh <<Get genomes, Pr. \ref{pr:dri}>>=
   if [[ -d $dir ]]; then
       rm -r $dir
   fi
-  bash ../scripts/genomes.sh -t "$type" -d $dir -n $ndb
+  bash ../scripts/genomes.sh -t "$type" -a "$acc" \
+       -d $dir -n $ndb
 #+end_src
 #+begin_export latex
 If at least one target and one neighbor genome was found, we continue

@@ -26,22 +26,24 @@ and check them.
   //<<Check options, Pr. \ref{pr:gen}>>
 #+end_src
 #+begin_export latex
-The script \ty{genomes.sh} takes four options,
+The script \ty{genomes.sh} takes five options,
 \begin{enumerate}
 \item \ty{-t} the type strain
+\item \ty{-a} accession of type strain
 \item \ty{-d} the directory in which the target and neighbor genomes
   for the type stain are deposited
 \item \ty{-n} the Neighbors database
 \item \ty{-h} help
 \end{enumerate}
-The first three options are mandatory.
+The first four options are mandatory.
 #+end_export
 #+begin_src sh <<Set usage, Pr. \ref{pr:gen}>>=
   ts="Enterobacter cloacae subsp. cloacae ATCC 13047"
-  usage="$(basename $0) [-h] -t <typeStrain> -d <downloadDir>"
-  usage="$usage -n <neighborsDb>
+  ta="CP001918.1"
+  usage="$(basename $0) [-h] -t <typeStrain> a <typeAccession>"
+  usage="$usage -d <downloadDir> -n <neighborsDb>
   Download target and neighbor genomes for a type strain.
-  Example: bash genomes.sh -t \"$ts\""
+  Example: bash genomes.sh -t \"$ts\" -a $ta"
   usage="$usage -d ecl -n neidb"
 #+end_src
 #+begin_export latex
@@ -50,11 +52,12 @@ and exit. If the user entered an illegal option or omitted an
 argument, the system prints a message and we exit with error code 1.
 #+end_export
 #+begin_src sh <<Parse options, Pr. \ref{pr:gen}>>=
-  while getopts "ht:d:n:" arg; do
+  while getopts "ht:a:d:n:" arg; do
       case $arg in
 	  h) echo "$usage"
 	     exit;;
 	  t) strain=$OPTARG;;
+	  a) acc=$OPTARG;;
 	  d) dir=$OPTARG;;
 	  n) db=$OPTARG;;
 	  \?) exit 1;;
@@ -62,12 +65,14 @@ argument, the system prints a message and we exit with error code 1.
   done
 #+end_src
 #+begin_export latex
-We check the three mandatory options, \ty{-t}, \ty{-d}, and \ty{-n}.
+We check the four mandatory options, \ty{-t}, \ty{-a}, \ty{-d}, and
+\ty{-n}.
 #+end_export
 #+begin_src sh <<Check options, Pr. \ref{pr:gen}>>=
-  //<<Check \ty{-t}, Pr. \ref{pr:gen}>>
-  //<<Check \ty{-d}, Pr. \ref{pr:gen}>>
-  //<<Check \ty{-n}, Pr. \ref{pr:gen}>>
+  ##<<Check \ty{-t}, Pr. \ref{pr:gen}>>
+  ##<<Check \ty{-a}, Pr. \ref{pr:gen}>>
+  ##<<Check \ty{-d}, Pr. \ref{pr:gen}>>
+  ##<<Check \ty{-n}, Pr. \ref{pr:gen}>>
 #+end_src
 #+begin_export latex
 If the user didn't set a type strain with \ty{-t}, we politely ask for
@@ -81,10 +86,21 @@ one and exit.
   fi
 #+end_src
 #+begin_export latex
-Similarly, if the user didn't provide a download directory with
-\ty{-d}, we ask for it and exit. If, however, (s)he did provide one
-and it already exists, we'd rather not overwrite that and also bail
-with message.
+If the user didn't provide the type stain's accession, we ask for it
+and exit.
+#+end_export
+#+begin_src bash <<Check \ty{-a}, Pr. \ref{pr:gen}>>=
+  if [[ ! $acc ]]; then
+      echo -n "Please provide the accession of the "
+      echo "type strain, e. g. CP001918.1"
+      echo "$usage"
+      exit 1
+  fi
+#+end_src
+#+begin_export latex
+If the user didn't provide a download directory with \ty{-d}, we ask
+for it and exit. If, however, (s)he did provide one and it already
+exists, we'd rather not overwrite that and also bail with message.
 #+end_export
 #+begin_src sh <<Check \ty{-d}, Pr. \ref{pr:gen}>>=
   if [[ ! $dir ]]; then
@@ -125,10 +141,11 @@ phylogenetic targets and neighbors.
   mkdir $dir
   cd $dir
   db="../$db"
-  //<<Get genome accessions, Pr. \ref{pr:gen}>>
-  //<<Divide accessions into taxonomic targets and neighbors, Pr. \ref{pr:gen}>>
-  //<<Download genomes, Pr. \ref{pr:gen}>>
-  //<<Divide genomes into phylogenetic targets and neighbors, Pr. \ref{pr:gen}>>
+  ##<<Get genome accessions, Pr. \ref{pr:gen}>>
+  ##<<Divide accessions into taxonomic targets and neighbors, Pr. \ref{pr:gen}>>
+  ##<<Check the type strain's genome is among the targets, Pr. \ref{pr:gen}>>
+  ##<<Download genomes, Pr. \ref{pr:gen}>>
+  ##<<Divide genomes into phylogenetic targets and neighbors, Pr. \ref{pr:gen}>>
 #+end_src
 #+begin_export latex
 To obtain the accessions of the taxonomic target and neighbor genomes,
@@ -161,13 +178,14 @@ parent has rank species, the type strain itself becomes the target.
   fi
 #+end_src
 #+begin_export latex
-Now we can list the target and neighbor genomes.
+Now we can save the target and neighbor genomes to the file
+\ty{acc.txt}.
 #+end_export
 #+begin_src sh <<Get genome accessions, Pr. \ref{pr:gen}>>=
   neighbors -t $target -l $db > acc.txt
 #+end_src
 #+begin_export latex
-The file \ty{all.txt} contains two columns, type and genome
+The file \ty{acc.txt} contains two columns, type and genome
 accession. The type is either \ty{t} for \emph{target}, or \ty{n} for
 \emph{neighbor}. So we can use \ty{grep} to divide the accessions into
 those of the targets, which we save in \ty{tacc.txt}, and those of the
@@ -178,6 +196,31 @@ neighbors, which we save in \ty{nacc.txt}.
       grep ^${a} acc.txt |
 	  awk '{print $2}' > ${a}acc.txt
   done
+#+end_src
+#+begin_export latex
+The list of target accessions, \ty{tacc.txt}, should now contain the
+genome of the type strain. To make sure, we look up the genome
+accession of the type strain, try to find it in \ty{tacc.txt}, and
+append it, if absent.
+#+end_export
+#+begin_src bash <<Check the type strain's genome is among the targets, Pr. \ref{pr:gen}>>=
+  typeAcc=""
+  ##<<Look up genome accession of type strain, Pr. \ref{pr:gen}>>
+  match=$(grep $typeAcc acc.txt)
+  if [[ ! $match ]]; then
+      echo $typeAcc >> tacc.txt
+  fi
+#+end_src
+#+begin_export latex
+We look up the genome accession corresponding to the type sequence
+accession  using Entrez. 
+#+end_export
+#+begin_src bash <<Look up genome accession of type strain, Pr. \ref{pr:gen}>>=
+  typeAcc=$(elink -db nuccore \
+	-id $acc \
+	-target assembly|esummary|xtract \
+	-pattern DocumentSummary \
+	-element Genbank)
 #+end_src
 #+begin_export latex
 We download the genomes in compressed form and then unpack them.
