@@ -14,7 +14,8 @@ results:
 	wget https://owncloud.gwdg.de/index.php/s/rPphYKKUz0Uluvy/download
 	mv download results.zip
 	unzip results.zip
-newNeidb: taxdump.tar.gz prokaryotes.txt eukaryotes.txt viruses.txt
+newNeidb: taxdump.tar.gz prokaryotes.txt eukaryotes.txt viruses.txt \
+        assembly_summary_genbank.txt assembly_summary_refseq.txt
 	test ! -f neidb || rm neidb
 	makeNeiDb
 taxdump.tar.gz:
@@ -26,5 +27,10 @@ eukaryotes.txt:
 	wget $(genomes)/eukaryotes.txt
 viruses.txt:
 	wget $(genomes)/viruses.txt
+assembly_summary_genbank.txt:
+	wget https://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/assembly_summary_genbank.txt
+
+assembly_summary_refseq.txt:
+	wget https://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/assembly_summary_refseq.txt
 clean:
-	rm -rf neidb ecl.* *.dmp eukaryotes.txt gc.prt prokaryotes.txt readme.txt results results.zip taxdump.tar.gz viruses.txt
+	rm -rf neidb ecl.* *.dmp eukaryotes.txt gc.prt prokaryotes.txt readme.txt results results.zip taxdump.tar.gz viruses.txt assembly_summary_genbank.txt assembly_summary_refseq.txt
