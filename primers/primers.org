@@ -228,16 +228,28 @@ We look up the taxon ID of the target from the Neighbors database
 using the program \ty{taxi}.
 #+end_export
 #+begin_src sh <<Look up taxon ID of target, Pr. \ref{pr:pri}>>=
-  tid=$(taxi "$strain" $ndb |
+  pid=$(taxi "$strain" $ndb |
 	    tail -n +2 |
 	    awk '{print $2}')
+
+  pr=$(ants $pid $ndb |
+	   tail -n 1 |
+	   awk '{print $NF}')
+
+  target=$pid
+
+  if [[ "$pr" == "species" ]]; then
+      target=$(taxi "$strain" $ndb |
+		   tail -n +2 |
+		   awk '{print $1}')
+  fi
 #+end_src
 #+begin_export latex
 We look up the target taxa from the Neighbors database using
 \ty{neighbors} and store them in the file \ty{taxa.txt}.
 #+end_export
 #+begin_src sh <<Look up target taxa, Pr. \ref{pr:pri}>>=
-  echo $tid |
+  echo $target |
       neighbors $ndb |
       grep '^t' |
       awk '{print $2}' > taxa.txt
