@@ -208,7 +208,9 @@ append it, if absent.
   ##<<Look up genome accession of type strain, Pr. \ref{pr:gen}>>
   match=$(grep $typeAcc acc.txt)
   if [[ ! $match ]]; then
-      echo $typeAcc >> tacc.txt
+      for x in $typeAcc; do
+	  echo $x >> tacc.txt
+      done
   fi
 #+end_src
 #+begin_export latex
